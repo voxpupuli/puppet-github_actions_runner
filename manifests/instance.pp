@@ -3,7 +3,6 @@
 #
 # @param ensure Determine if to add or remove the resource.
 # @param org_name org name for organization level runners. (Default: Value set by github_actions_runner Class)
-#
 # @param enterprise_name enterprise name for global runners. (Default: Value set by github_actions_runner Class)
 # @param personal_access_token GitHub PAT with admin permission on the repositories or the origanization.(Default: Value set by github_actions_runner Class)
 # @param user User to be used in Service and directories.(Default: Value set by github_actions_runner Class)
@@ -36,6 +35,7 @@ define github_actions_runner::instance (
   Optional[String[1]]            $no_proxy              = $github_actions_runner::no_proxy,
   Optional[Boolean]              $disable_update        = $github_actions_runner::disable_update,
   Optional[Array[String[1]]]     $labels                = undef,
+  Optional[String[1]]            $runner_group          = undef,
   Optional[String[1]]            $enterprise_name       = $github_actions_runner::enterprise_name,
   Optional[String[1]]            $org_name              = $github_actions_runner::org_name,
   Optional[String[1]]            $repo_name             = undef,
