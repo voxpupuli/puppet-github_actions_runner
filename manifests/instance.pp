@@ -20,6 +20,7 @@
 # @param labels A list of costum lables to add to a runner.
 # @param path List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 # @param env List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
+# @param runner_group The github runner group to add the runner to.
 #
 define github_actions_runner::instance (
   Enum['present', 'absent']      $ensure                = 'present',
@@ -40,6 +41,7 @@ define github_actions_runner::instance (
   Optional[String[1]]            $repo_name             = undef,
   Optional[Array[String]]        $path                  = $github_actions_runner::path,
   Optional[Hash[String, String]] $env                   = $github_actions_runner::env,
+  Optional[String[1]]            $runner_group          = undef,
 ) {
   if $labels {
     $flattend_labels_list=join($labels, ',')
@@ -102,6 +104,7 @@ define github_actions_runner::instance (
     hostname              => $hostname,
     assured_labels        => $assured_labels,
     disable_update        => $disable_update,
+    runner_group          => $runner_group,
   }
   file { "${github_actions_runner::root_dir}/${name}/configure_install_runner.sh":
     ensure  => $ensure,

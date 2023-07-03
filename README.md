@@ -38,6 +38,7 @@ github_actions_runner::instances:
   example_org_instance:
     labels:
       - self-hosted-custom
+    runner_group: 'MyRunners'
 ```
 
 Note, your `personal_access_token` has to contain the `admin:org` permission.
