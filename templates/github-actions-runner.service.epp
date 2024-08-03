@@ -6,6 +6,7 @@
       Optional[String] $https_proxy = undef,
       Optional[String] $no_proxy = undef
 | -%>
+# THIS FILE IS MANAGED BY PUPPET
 [Unit]
 Description=github-actions-runner-<%= $instance_name %>
 After=network.target
