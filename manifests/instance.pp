@@ -58,6 +58,7 @@
 define github_actions_runner::instance (
   Enum['present', 'absent']      $ensure                = 'present',
   String[1]                      $personal_access_token = $github_actions_runner::personal_access_token,
+  Optional[Variant[Sensitive[String[1]],String[1]]] $repo_token = undef,
   String[1]                      $user                  = $github_actions_runner::user,
   String[1]                      $group                 = $github_actions_runner::group,
   String[1]                      $hostname              = $facts['networking']['hostname'],
@@ -136,6 +137,7 @@ define github_actions_runner::instance (
     group   => $group,
     content => stdlib::deferrable_epp('github_actions_runner/configure_install_runner.sh.epp', {
       personal_access_token => $personal_access_token,
+      repo_token            => $repo_token,
       token_url             => $token_url,
       instance_name         => $instance_name,
       root_dir              => $github_actions_runner::root_dir,
