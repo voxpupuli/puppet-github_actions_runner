@@ -26,7 +26,7 @@ class github_actions_runner (
   Enum['present', 'absent']      $ensure = 'present',
   Stdlib::Absolutepath           $base_dir_name = '/some_dir/actions-runner',
   String[1]                      $package_name = 'actions-runner-linux-x64',
-  String[1]                      $package_ensure = '2.292.0',
+  String[1]                      $package_ensure = '2.319.1',
   String[1]                      $repository_url = 'https://github.com/actions/runner/releases/download',
   String[1]                      $user = 'root',
   String[1]                      $group = 'root',
