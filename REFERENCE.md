@@ -48,11 +48,15 @@ Data type: `Enum['present', 'absent']`
 
 Determine if to add or remove the resource.
 
+Default value: `'present'`
+
 ##### <a name="-github_actions_runner--base_dir_name"></a>`base_dir_name`
 
 Data type: `Stdlib::Absolutepath`
 
 Location of the base directory for actions runner to be installed.
+
+Default value: `'/some_dir/actions-runner'`
 
 ##### <a name="-github_actions_runner--org_name"></a>`org_name`
 
@@ -76,11 +80,15 @@ Data type: `String[1]`
 
 GitHub PAT with admin permission on the repositories or the origanization.
 
+Default value: `'PAT'`
+
 ##### <a name="-github_actions_runner--package_name"></a>`package_name`
 
 Data type: `String[1]`
 
 GitHub Actions runner offical package name.
+
+Default value: `'actions-runner-linux-x64'`
 
 ##### <a name="-github_actions_runner--package_ensure"></a>`package_ensure`
 
@@ -88,11 +96,15 @@ Data type: `String[1]`
 
 GitHub Actions runner version to be used.
 
+Default value: `'2.292.0'`
+
 ##### <a name="-github_actions_runner--repository_url"></a>`repository_url`
 
 Data type: `String[1]`
 
 URL to download GitHub actions runner.
+
+Default value: `'https://github.com/actions/runner/releases/download'`
 
 ##### <a name="-github_actions_runner--user"></a>`user`
 
@@ -100,11 +112,15 @@ Data type: `String[1]`
 
 User to be used in Service and directories.
 
+Default value: `'root'`
+
 ##### <a name="-github_actions_runner--group"></a>`group`
 
 Data type: `String[1]`
 
 Group to be used in Service and directories.
+
+Default value: `'root'`
 
 ##### <a name="-github_actions_runner--instances"></a>`instances`
 
@@ -112,17 +128,23 @@ Data type: `Hash[String[1], Hash]`
 
 Github Runner Instances to be managed.
 
+Default value: `{}`
+
 ##### <a name="-github_actions_runner--github_domain"></a>`github_domain`
 
 Data type: `String[1]`
 
 Base URL for Github Domain.
 
+Default value: `'https://github.com'`
+
 ##### <a name="-github_actions_runner--github_api"></a>`github_api`
 
 Data type: `String[1]`
 
 Base URL for Github API.
+
+Default value: `'https://api.github.com'`
 
 ##### <a name="-github_actions_runner--http_proxy"></a>`http_proxy`
 
