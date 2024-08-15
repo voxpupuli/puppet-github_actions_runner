@@ -1,15 +1,6 @@
-# This file can be used to install module dependencies for unit testing
-# See https://github.com/puppetlabs/puppetlabs_spec_helper#using-fixtures for details
 ---
 fixtures:
-  forge_modules:
-    stdlib: "puppetlabs/stdlib"
   repositories:
-    archive:
-      repo: "https://github.com/voxpupuli/puppet-archive.git"
-      ref: "v1.1.2"
-    systemd:
-      repo: "https://github.com/camptocamp/puppet-systemd.git"
-      ref: "2.7.0"
-
-
+    stdlib: 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
+    archive: 'https://github.com/voxpupuli/puppet-archive.git'
+    systemd: 'https://github.com/camptocamp/puppet-systemd.git'
