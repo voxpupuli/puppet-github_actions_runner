@@ -88,7 +88,6 @@ class github_actions_runner (
   Optional[Array[String]]        $path = undef,
   Optional[Hash[String, String]] $env = undef,
 ) {
-
   $root_dir = "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}"
 
   $ensure_directory = $github_actions_runner::ensure ? {
@@ -105,5 +104,4 @@ class github_actions_runner (
   }
 
   create_resources(github_actions_runner::instance, $github_actions_runner::instances)
-
 }
