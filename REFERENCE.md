@@ -6,84 +6,17 @@
 
 ### Classes
 
-* [`github_actions_runner`](#github_actions_runner): Class: github_actions_runner ===========================  Manages actions_runner service and configuration All defaults can be viewed in the 
+* [`github_actions_runner`](#github_actions_runner): Manages actions_runner service and configuration
 
 ### Defined types
 
-* [`github_actions_runner::instance`](#github_actions_runner--instance): == Define github_actions_runner::instance   Configure and deploy actions runners instances  * ensure  Enum, Determine if to add or remove the
+* [`github_actions_runner::instance`](#github_actions_runner--instance): Configure and deploy actions runners instances
 
 ## Classes
 
 ### <a name="github_actions_runner"></a>`github_actions_runner`
 
-Class: github_actions_runner
-===========================
-
 Manages actions_runner service and configuration
-All defaults can be viewed in the `modules/actions_runner/data/common.yaml` file.
-
-Parameters
-----------
-
-* ensure
- Enum, Determine if to add or remove the resource.
-
-* base_dir_name
- Absolutepath, Location of the base directory for actions runner to be installed.
-
-* org_name
- String, actions runner org name.
-
-* enterprise_name
- String, enterprise name for global runners
-
-* personal_access_token
-String, GitHub PAT with admin permission on the repositories or the origanization.
-
-* package_name
-String, GitHub Actions runner offical package name.
-
-* package_ensure
-String, GitHub Actions runner version to be used.
-
-* repository_url
-String, URL to download GitHub actions runner.
-
-* user
-String, User to be used in Service and directories.
-
-* group
-String, Group to be used in Service and directories.
-
-* instances
-Hash[String, Hash], Github Runner Instances to be managed.
-
-* github_domain
-String, Base URL for Github Domain.
-
-* github_api
-String, Base URL for Github API.
-
-* http_proxy
-Optional[String], Proxy URL for HTTP traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners.
-
-* https_proxy
-Optional[String], Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
-
-* no_proxy
-Optional[String], Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
-
-* disable_update
-Optional[Boolean], toggle for disabling automatic runner updates.
-
-* path
-Optional[Array[String]], List of paths to be used as PATH env in the instance runner.
-                         If not defined, file ".path" will be kept as created by the runner scripts. Default value: undef
-
-* env
-Optional[Hash[String, String]], List of variables to be used as env variables in the instance runner.
-                                If not defined, file ".env" will be kept as created
-                                by the runner scripts. (Default: Value set by github_actions_runner Class)
 
 #### Parameters
 
@@ -91,6 +24,8 @@ The following parameters are available in the `github_actions_runner` class:
 
 * [`ensure`](#-github_actions_runner--ensure)
 * [`base_dir_name`](#-github_actions_runner--base_dir_name)
+* [`org_name`](#-github_actions_runner--org_name)
+* [`enterprise_name`](#-github_actions_runner--enterprise_name)
 * [`personal_access_token`](#-github_actions_runner--personal_access_token)
 * [`package_name`](#-github_actions_runner--package_name)
 * [`package_ensure`](#-github_actions_runner--package_ensure)
@@ -100,8 +35,6 @@ The following parameters are available in the `github_actions_runner` class:
 * [`instances`](#-github_actions_runner--instances)
 * [`github_domain`](#-github_actions_runner--github_domain)
 * [`github_api`](#-github_actions_runner--github_api)
-* [`enterprise_name`](#-github_actions_runner--enterprise_name)
-* [`org_name`](#-github_actions_runner--org_name)
 * [`http_proxy`](#-github_actions_runner--http_proxy)
 * [`https_proxy`](#-github_actions_runner--https_proxy)
 * [`no_proxy`](#-github_actions_runner--no_proxy)
@@ -113,89 +46,89 @@ The following parameters are available in the `github_actions_runner` class:
 
 Data type: `Enum['present', 'absent']`
 
-
+Determine if to add or remove the resource.
 
 ##### <a name="-github_actions_runner--base_dir_name"></a>`base_dir_name`
 
 Data type: `Stdlib::Absolutepath`
 
-
-
-##### <a name="-github_actions_runner--personal_access_token"></a>`personal_access_token`
-
-Data type: `String[1]`
-
-
-
-##### <a name="-github_actions_runner--package_name"></a>`package_name`
-
-Data type: `String[1]`
-
-
-
-##### <a name="-github_actions_runner--package_ensure"></a>`package_ensure`
-
-Data type: `String[1]`
-
-
-
-##### <a name="-github_actions_runner--repository_url"></a>`repository_url`
-
-Data type: `String[1]`
-
-
-
-##### <a name="-github_actions_runner--user"></a>`user`
-
-Data type: `String[1]`
-
-
-
-##### <a name="-github_actions_runner--group"></a>`group`
-
-Data type: `String[1]`
-
-
-
-##### <a name="-github_actions_runner--instances"></a>`instances`
-
-Data type: `Hash[String[1], Hash]`
-
-
-
-##### <a name="-github_actions_runner--github_domain"></a>`github_domain`
-
-Data type: `String[1]`
-
-
-
-##### <a name="-github_actions_runner--github_api"></a>`github_api`
-
-Data type: `String[1]`
-
-
-
-##### <a name="-github_actions_runner--enterprise_name"></a>`enterprise_name`
-
-Data type: `Optional[String[1]]`
-
-
-
-Default value: `undef`
+Location of the base directory for actions runner to be installed.
 
 ##### <a name="-github_actions_runner--org_name"></a>`org_name`
 
 Data type: `Optional[String[1]]`
 
-
+actions runner org name.
 
 Default value: `undef`
+
+##### <a name="-github_actions_runner--enterprise_name"></a>`enterprise_name`
+
+Data type: `Optional[String[1]]`
+
+enterprise name for global runners
+
+Default value: `undef`
+
+##### <a name="-github_actions_runner--personal_access_token"></a>`personal_access_token`
+
+Data type: `String[1]`
+
+GitHub PAT with admin permission on the repositories or the origanization.
+
+##### <a name="-github_actions_runner--package_name"></a>`package_name`
+
+Data type: `String[1]`
+
+GitHub Actions runner offical package name.
+
+##### <a name="-github_actions_runner--package_ensure"></a>`package_ensure`
+
+Data type: `String[1]`
+
+GitHub Actions runner version to be used.
+
+##### <a name="-github_actions_runner--repository_url"></a>`repository_url`
+
+Data type: `String[1]`
+
+URL to download GitHub actions runner.
+
+##### <a name="-github_actions_runner--user"></a>`user`
+
+Data type: `String[1]`
+
+User to be used in Service and directories.
+
+##### <a name="-github_actions_runner--group"></a>`group`
+
+Data type: `String[1]`
+
+Group to be used in Service and directories.
+
+##### <a name="-github_actions_runner--instances"></a>`instances`
+
+Data type: `Hash[String[1], Hash]`
+
+Github Runner Instances to be managed.
+
+##### <a name="-github_actions_runner--github_domain"></a>`github_domain`
+
+Data type: `String[1]`
+
+Base URL for Github Domain.
+
+##### <a name="-github_actions_runner--github_api"></a>`github_api`
+
+Data type: `String[1]`
+
+Base URL for Github API.
 
 ##### <a name="-github_actions_runner--http_proxy"></a>`http_proxy`
 
 Data type: `Optional[String[1]]`
 
-
+Proxy URL for HTTP traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners.
 
 Default value: `undef`
 
@@ -203,7 +136,7 @@ Default value: `undef`
 
 Data type: `Optional[String[1]]`
 
-
+Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 
 Default value: `undef`
 
@@ -211,7 +144,7 @@ Default value: `undef`
 
 Data type: `Optional[String[1]]`
 
-
+Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 
 Default value: `undef`
 
@@ -219,7 +152,7 @@ Default value: `undef`
 
 Data type: `Boolean`
 
-
+toggle for disabling automatic runner updates.
 
 Default value: `false`
 
@@ -227,7 +160,7 @@ Default value: `false`
 
 Data type: `Optional[Array[String]]`
 
-
+List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created by the runner scripts. Default value: undef
 
 Default value: `undef`
 
@@ -235,7 +168,7 @@ Default value: `undef`
 
 Data type: `Optional[Hash[String, String]]`
 
-
+List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 
 Default value: `undef`
 
@@ -243,66 +176,15 @@ Default value: `undef`
 
 ### <a name="github_actions_runner--instance"></a>`github_actions_runner::instance`
 
-== Define github_actions_runner::instance
-
- Configure and deploy actions runners instances
-
-* ensure
- Enum, Determine if to add or remove the resource.
-
-* org_name
-Optional[String], org name for organization level runners. (Default: Value set by github_actions_runner Class)
-
-* enterprise_name
- Optional[String], enterprise name for global runners. (Default: Value set by github_actions_runner Class)
-
-* personal_access_token
-String, GitHub PAT with admin permission on the repositories or the origanization.(Default: Value set by github_actions_runner Class)
-
-* user
-String, User to be used in Service and directories.(Default: Value set by github_actions_runner Class)
-
-* group
-String, Group to be used in Service and directories.(Default: Value set by github_actions_runner Class)
-
-* hostname
-String, actions runner name.
-
-* instance_name
-String, The instance name as part of the instances Hash.
-
-* http_proxy
-Optional[String], Proxy URL for HTTP traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners.
-
-* https_proxy
-Optional[String], Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
-
-* no_proxy
-Optional[String], Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
-
-* disable_update
-Optional[Boolean], toggle for disabling automatic runner updates.
-
-* repo_name
-Optional[String], actions runner repository name.
-
-* labels
-Optional[Array[String]], A list of costum lables to add to a runner.
-
-* path
-Optional[Array[String]], List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created
-                         by the runner scripts. (Default: Value set by github_actions_runner Class)
-
-* env
-Optional[Hash[String, String]], List of variables to be used as env variables in the instance runner.
-                                If not defined, file ".env" will be kept as created
-                                by the runner scripts. (Default: Value set by github_actions_runner Class)
+Configure and deploy actions runners instances
 
 #### Parameters
 
 The following parameters are available in the `github_actions_runner::instance` defined type:
 
 * [`ensure`](#-github_actions_runner--instance--ensure)
+* [`org_name`](#-github_actions_runner--instance--org_name)
+* [`enterprise_name`](#-github_actions_runner--instance--enterprise_name)
 * [`personal_access_token`](#-github_actions_runner--instance--personal_access_token)
 * [`user`](#-github_actions_runner--instance--user)
 * [`group`](#-github_actions_runner--instance--group)
@@ -314,10 +196,8 @@ The following parameters are available in the `github_actions_runner::instance` 
 * [`https_proxy`](#-github_actions_runner--instance--https_proxy)
 * [`no_proxy`](#-github_actions_runner--instance--no_proxy)
 * [`disable_update`](#-github_actions_runner--instance--disable_update)
-* [`labels`](#-github_actions_runner--instance--labels)
-* [`enterprise_name`](#-github_actions_runner--instance--enterprise_name)
-* [`org_name`](#-github_actions_runner--instance--org_name)
 * [`repo_name`](#-github_actions_runner--instance--repo_name)
+* [`labels`](#-github_actions_runner--instance--labels)
 * [`path`](#-github_actions_runner--instance--path)
 * [`env`](#-github_actions_runner--instance--env)
 
@@ -325,15 +205,31 @@ The following parameters are available in the `github_actions_runner::instance` 
 
 Data type: `Enum['present', 'absent']`
 
-
+Determine if to add or remove the resource.
 
 Default value: `'present'`
+
+##### <a name="-github_actions_runner--instance--org_name"></a>`org_name`
+
+Data type: `Optional[String[1]]`
+
+org name for organization level runners. (Default: Value set by github_actions_runner Class)
+
+Default value: `$github_actions_runner::org_name`
+
+##### <a name="-github_actions_runner--instance--enterprise_name"></a>`enterprise_name`
+
+Data type: `Optional[String[1]]`
+
+enterprise name for global runners. (Default: Value set by github_actions_runner Class)
+
+Default value: `$github_actions_runner::enterprise_name`
 
 ##### <a name="-github_actions_runner--instance--personal_access_token"></a>`personal_access_token`
 
 Data type: `String[1]`
 
-
+GitHub PAT with admin permission on the repositories or the origanization.(Default: Value set by github_actions_runner Class)
 
 Default value: `$github_actions_runner::personal_access_token`
 
@@ -341,7 +237,7 @@ Default value: `$github_actions_runner::personal_access_token`
 
 Data type: `String[1]`
 
-
+User to be used in Service and directories.(Default: Value set by github_actions_runner Class)
 
 Default value: `$github_actions_runner::user`
 
@@ -349,7 +245,7 @@ Default value: `$github_actions_runner::user`
 
 Data type: `String[1]`
 
-
+Group to be used in Service and directories.(Default: Value set by github_actions_runner Class)
 
 Default value: `$github_actions_runner::group`
 
@@ -357,7 +253,7 @@ Default value: `$github_actions_runner::group`
 
 Data type: `String[1]`
 
-
+actions runner name.
 
 Default value: `$facts['networking']['hostname']`
 
@@ -365,7 +261,7 @@ Default value: `$facts['networking']['hostname']`
 
 Data type: `String[1]`
 
-
+The instance name as part of the instances Hash.
 
 Default value: `$title`
 
@@ -373,7 +269,7 @@ Default value: `$title`
 
 Data type: `String[1]`
 
-
+domain for GitHub, needs to be adjusted for GitHub Enterprise
 
 Default value: `$github_actions_runner::github_domain`
 
@@ -381,7 +277,7 @@ Default value: `$github_actions_runner::github_domain`
 
 Data type: `String[1]`
 
-
+URL for the GitHub API
 
 Default value: `$github_actions_runner::github_api`
 
@@ -389,7 +285,7 @@ Default value: `$github_actions_runner::github_api`
 
 Data type: `Optional[String[1]]`
 
-
+Proxy URL for HTTP traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners.
 
 Default value: `$github_actions_runner::http_proxy`
 
@@ -397,7 +293,7 @@ Default value: `$github_actions_runner::http_proxy`
 
 Data type: `Optional[String[1]]`
 
-
+Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 
 Default value: `$github_actions_runner::https_proxy`
 
@@ -405,7 +301,7 @@ Default value: `$github_actions_runner::https_proxy`
 
 Data type: `Optional[String[1]]`
 
-
+Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 
 Default value: `$github_actions_runner::no_proxy`
 
@@ -413,39 +309,23 @@ Default value: `$github_actions_runner::no_proxy`
 
 Data type: `Optional[Boolean]`
 
-
+toggle for disabling automatic runner updates.
 
 Default value: `$github_actions_runner::disable_update`
-
-##### <a name="-github_actions_runner--instance--labels"></a>`labels`
-
-Data type: `Optional[Array[String[1]]]`
-
-
-
-Default value: `undef`
-
-##### <a name="-github_actions_runner--instance--enterprise_name"></a>`enterprise_name`
-
-Data type: `Optional[String[1]]`
-
-
-
-Default value: `$github_actions_runner::enterprise_name`
-
-##### <a name="-github_actions_runner--instance--org_name"></a>`org_name`
-
-Data type: `Optional[String[1]]`
-
-
-
-Default value: `$github_actions_runner::org_name`
 
 ##### <a name="-github_actions_runner--instance--repo_name"></a>`repo_name`
 
 Data type: `Optional[String[1]]`
 
+actions runner repository name.
 
+Default value: `undef`
+
+##### <a name="-github_actions_runner--instance--labels"></a>`labels`
+
+Data type: `Optional[Array[String[1]]]`
+
+A list of costum lables to add to a runner.
 
 Default value: `undef`
 
@@ -453,7 +333,7 @@ Default value: `undef`
 
 Data type: `Optional[Array[String]]`
 
-
+List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 
 Default value: `$github_actions_runner::path`
 
@@ -461,7 +341,7 @@ Default value: `$github_actions_runner::path`
 
 Data type: `Optional[Hash[String, String]]`
 
-
+List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 
 Default value: `$github_actions_runner::env`
 
