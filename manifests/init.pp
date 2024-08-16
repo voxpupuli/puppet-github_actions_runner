@@ -1,71 +1,25 @@
-# Class: github_actions_runner
-# ===========================
 #
-# Manages actions_runner service and configuration
-# All defaults can be viewed in the `modules/actions_runner/data/common.yaml` file.
+# @summary Manages actions_runner service and configuration
 #
-# Parameters
-# ----------
-#
-# * ensure
-#  Enum, Determine if to add or remove the resource.
-#
-# * base_dir_name
-#  Absolutepath, Location of the base directory for actions runner to be installed.
-#
-# * org_name
-#  String, actions runner org name.
-#
-# * enterprise_name
-#  String, enterprise name for global runners
-#
-# * personal_access_token
-# String, GitHub PAT with admin permission on the repositories or the origanization.
-#
-# * package_name
-# String, GitHub Actions runner offical package name.
-#
-# * package_ensure
-# String, GitHub Actions runner version to be used.
-#
-# * repository_url
-# String, URL to download GitHub actions runner.
-#
-# * user
-# String, User to be used in Service and directories.
-#
-# * group
-# String, Group to be used in Service and directories.
-#
-# * instances
-# Hash[String, Hash], Github Runner Instances to be managed.
-#
-# * github_domain
-# String, Base URL for Github Domain.
-#
-# * github_api
-# String, Base URL for Github API.
-#
-# * http_proxy
-# Optional[String], Proxy URL for HTTP traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners.
-#
-# * https_proxy
-# Optional[String], Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
-#
-# * no_proxy
-# Optional[String], Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
-#
-# * disable_update
-# Optional[Boolean], toggle for disabling automatic runner updates.
-#
-# * path
-# Optional[Array[String]], List of paths to be used as PATH env in the instance runner.
-#                          If not defined, file ".path" will be kept as created by the runner scripts. Default value: undef
-#
-# * env
-# Optional[Hash[String, String]], List of variables to be used as env variables in the instance runner.
-#                                 If not defined, file ".env" will be kept as created
-#                                 by the runner scripts. (Default: Value set by github_actions_runner Class)
+# @param ensure Determine if to add or remove the resource.
+# @param base_dir_name Location of the base directory for actions runner to be installed.
+# @param org_name actions runner org name.
+# @param enterprise_name enterprise name for global runners
+# @param personal_access_token GitHub PAT with admin permission on the repositories or the origanization.
+# @param package_name GitHub Actions runner offical package name.
+# @param package_ensure GitHub Actions runner version to be used.
+# @param repository_url URL to download GitHub actions runner.
+# @param user User to be used in Service and directories.
+# @param group Group to be used in Service and directories.
+# @param instances Github Runner Instances to be managed.
+# @param github_domain Base URL for Github Domain.
+# @param github_api Base URL for Github API.
+# @param http_proxy Proxy URL for HTTP traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners.
+# @param https_proxy  Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
+# @param no_proxy Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
+# @param disable_update toggle for disabling automatic runner updates.
+# @param path List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created by the runner scripts. Default value: undef
+# @param env List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 #
 class github_actions_runner (
   Enum['present', 'absent']      $ensure,
