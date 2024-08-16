@@ -9,6 +9,7 @@
       Boolean $disable_update,
 | -%>
 #!/bin/bash
+# THIS FILE IS MANAGED BY PUPPET
 # Configure the action runner after the package file has been downloaded.
 set -e
 
