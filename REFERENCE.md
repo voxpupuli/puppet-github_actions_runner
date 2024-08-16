@@ -96,7 +96,7 @@ Data type: `String[1]`
 
 GitHub Actions runner version to be used.
 
-Default value: `'2.292.0'`
+Default value: `'2.319.1'`
 
 ##### <a name="-github_actions_runner--repository_url"></a>`repository_url`
 
