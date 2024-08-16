@@ -93,21 +93,22 @@ define github_actions_runner::instance (
     require      => File["${github_actions_runner::root_dir}/${instance_name}"],
   }
 
+  $data = {
+    personal_access_token => $personal_access_token,
+    token_url             => $token_url,
+    instance_name         => $instance_name,
+    root_dir              => $github_actions_runner::root_dir,
+    url                   => $url,
+    hostname              => $hostname,
+    assured_labels        => $assured_labels,
+    disable_update        => $disable_update,
+  }
   file { "${github_actions_runner::root_dir}/${name}/configure_install_runner.sh":
     ensure  => $ensure,
     mode    => '0755',
     owner   => $user,
     group   => $group,
-    content => epp('github_actions_runner/configure_install_runner.sh.epp', {
-        personal_access_token => $personal_access_token,
-        token_url             => $token_url,
-        instance_name         => $instance_name,
-        root_dir              => $github_actions_runner::root_dir,
-        url                   => $url,
-        hostname              => $hostname,
-        assured_labels        => $assured_labels,
-        disable_update        => $disable_update,
-    }),
+    content => stdlib::deferrable_epp('github_actions_runner/configure_install_runner.sh.epp', $data),
     notify  => Exec["${instance_name}-run_configure_install_runner.sh"],
     require => Archive["${instance_name}-${archive_name}"],
   }
