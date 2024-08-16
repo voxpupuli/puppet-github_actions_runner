@@ -222,6 +222,7 @@ The following parameters are available in the `github_actions_runner::instance` 
 * [`labels`](#-github_actions_runner--instance--labels)
 * [`path`](#-github_actions_runner--instance--path)
 * [`env`](#-github_actions_runner--instance--env)
+* [`runner_group`](#-github_actions_runner--instance--runner_group)
 
 ##### <a name="-github_actions_runner--instance--ensure"></a>`ensure`
 
@@ -366,4 +367,12 @@ Data type: `Optional[Hash[String, String]]`
 List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 
 Default value: `$github_actions_runner::env`
+
+##### <a name="-github_actions_runner--instance--runner_group"></a>`runner_group`
+
+Data type: `Optional[String[1]]`
+
+The github runner group to add the runner to.
+
+Default value: `undef`
 
