@@ -6,7 +6,7 @@
 [![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/puppet/github_actions_runner.svg)](https://forge.puppetlabs.com/puppet/github_actions_runner)
 [![Puppet Forge - endorsement](https://img.shields.io/puppetforge/e/puppet/github_actions_runner.svg)](https://forge.puppetlabs.com/puppet/github_actions_runner)
 [![Puppet Forge - scores](https://img.shields.io/puppetforge/f/puppet/github_actions_runner.svg)](https://forge.puppetlabs.com/puppet/github_actions_runner)
-[![puppetmodule.info docs](http://www.puppetmodule.info/images/badge.png)](http://www.puppetmodule.info/m/puppet-github_actions_runner)
+[![puppetmodule.info docs](https://www.puppetmodule.info/images/badge.svg)](https://www.puppetmodule.info/m/puppet-github_actions_runner)
 [![Apache-2.0 License](https://img.shields.io/github/license/voxpupuli/puppet-github_actions_runner.svg)](LICENSE)
 [![Migrated from Telefonica](https://img.shields.io/badge/Migrated%20from-Telefonica-fb7047.svg)](#transfer-notice)
 
