@@ -5,6 +5,7 @@
       String $url,
       String $hostname,
       String $assured_labels,
+      Optional[Variant[Sensitive,String]] $repo_token = undef,
       Optional[String[1]] $runner_group = undef,
       Boolean $disable_update,
 | -%>
@@ -13,20 +14,22 @@
 # Configure the action runner after the package file has been downloaded.
 set -e
 
+<% if $repo_token { -%>
+TOKEN=<%= $repo_token %>
+<% } else {-%>
 # Get registration token.
 TOKEN=$(curl -s -XPOST -H "authorization: token <%= $personal_access_token %>"  \
     <%= $token_url %> | jq -r .token)
+<% } -%>
 
 # Allow root
 export RUNNER_ALLOW_RUNASROOT=true
-
 
 # (Optional) Remove previous config.
 <%= $root_dir %>/<%= $instance_name %>/config.sh remove \
   --url <%= $url %>                                     \
   --token ${TOKEN}                                      \
   --name <%= $hostname %>-<%= $instance_name %> &>/dev/null
-
 
 # Configure the runner.
 <%= $root_dir %>/<%= $instance_name %>/config.sh \

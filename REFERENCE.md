@@ -223,6 +223,7 @@ The following parameters are available in the `github_actions_runner::instance` 
 * [`path`](#-github_actions_runner--instance--path)
 * [`env`](#-github_actions_runner--instance--env)
 * [`runner_group`](#-github_actions_runner--instance--runner_group)
+* [`repo_token`](#-github_actions_runner--instance--repo_token)
 
 ##### <a name="-github_actions_runner--instance--ensure"></a>`ensure`
 
@@ -373,6 +374,14 @@ Default value: `$github_actions_runner::env`
 Data type: `Optional[String[1]]`
 
 The github runner group to add the runner to.
+
+Default value: `undef`
+
+##### <a name="-github_actions_runner--instance--repo_token"></a>`repo_token`
+
+Data type: `Optional[Variant[Sensitive[String[1]],String[1]]]`
+
+if set, the runner will be registed to a specific repo. repo_name is than required.
 
 Default value: `undef`
 

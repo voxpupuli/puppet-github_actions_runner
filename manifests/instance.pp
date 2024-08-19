@@ -21,10 +21,12 @@
 # @param path List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 # @param env List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 # @param runner_group The github runner group to add the runner to.
+# @param repo_token if set, the runner will be registed to a specific repo. repo_name is than required.
 #
 define github_actions_runner::instance (
   Enum['present', 'absent']      $ensure                = 'present',
   String[1]                      $personal_access_token = $github_actions_runner::personal_access_token,
+  Optional[Variant[Sensitive[String[1]],String[1]]] $repo_token = undef,
   String[1]                      $user                  = $github_actions_runner::user,
   String[1]                      $group                 = $github_actions_runner::group,
   String[1]                      $hostname              = $facts['networking']['hostname'],
@@ -43,6 +45,11 @@ define github_actions_runner::instance (
   Optional[Hash[String, String]] $env                   = $github_actions_runner::env,
   Optional[String[1]]            $runner_group          = undef,
 ) {
+  # when a repo_token is set, the repo_name is required as well
+  if $repo_token {
+    assert_type(String[1], $repo_name)
+  }
+
   if $labels {
     $flattend_labels_list=join($labels, ',')
     $assured_labels="--labels ${flattend_labels_list}"
@@ -97,6 +104,7 @@ define github_actions_runner::instance (
 
   $data = {
     personal_access_token => $personal_access_token,
+    repo_token            => $repo_token,
     token_url             => $token_url,
     instance_name         => $instance_name,
     root_dir              => $github_actions_runner::root_dir,
