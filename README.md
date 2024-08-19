@@ -1,18 +1,31 @@
-> **:warning: Project not maintained (we no longer can keep up with the changes and validate them, feel free to fork it)**
-
-![PDK Test Unit](https://github.com/Telefonica/puppet-github-actions-runner/workflows/Run%20pdk%20test%20unit/badge.svg?branch=master)
-
 # GitHub Actions Runner
+
+[![Build Status](https://github.com/voxpupuli/puppet-github_actions_runner/workflows/CI/badge.svg)](https://github.com/voxpupuli/puppet-github_actions_runner/actions?query=workflow%3ACI)
+[![Release](https://github.com/voxpupuli/puppet-github_actions_runner/actions/workflows/release.yml/badge.svg)](https://github.com/voxpupuli/puppet-github_actions_runner/actions/workflows/release.yml)
+[![Puppet Forge](https://img.shields.io/puppetforge/v/puppet/github_actions_runner.svg)](https://forge.puppetlabs.com/puppet/github_actions_runner)
+[![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/puppet/github_actions_runner.svg)](https://forge.puppetlabs.com/puppet/github_actions_runner)
+[![Puppet Forge - endorsement](https://img.shields.io/puppetforge/e/puppet/github_actions_runner.svg)](https://forge.puppetlabs.com/puppet/github_actions_runner)
+[![Puppet Forge - scores](https://img.shields.io/puppetforge/f/puppet/github_actions_runner.svg)](https://forge.puppetlabs.com/puppet/github_actions_runner)
+[![puppetmodule.info docs](http://www.puppetmodule.info/images/badge.png)](http://www.puppetmodule.info/m/puppet-github_actions_runner)
+[![Apache-2.0 License](https://img.shields.io/github/license/voxpupuli/puppet-github_actions_runner.svg)](LICENSE)
+[![Migrated from Telefonica](https://img.shields.io/badge/Migrated%20from-Telefonica-fb7047.svg)](#transfer-notice)
 
 Automatic configuration for running GitHub Actions as a service
 
 #### Table of Contents
 
-1. [Description](#description)
-    - [Hiera configuration examples](#hiera-configuration-examples)
-    - [Github Enterprise examples](#github-enterprise-examples)
-2. [Limitations - OS compatibility, etc.](#limitations)
-3. [Development - Guide for contributing to the module](#development)
+* [Description](#description)
+* [Hiera configuration examples](#hiera-configuration-examples)
+  * [Creating an organization level Actions runner](#creating-an-organization-level-actions-runner)
+  * [Creating an additional repository level Actions runner](#creating-an-additional-repository-level-actions-runner)
+  * [Instance level overwrites](#instance-level-overwrites)
+  * [Adding a global proxy and overwriting an instance level proxy](#adding-a-global-proxy-and-overwriting-an-instance-level-proxy)
+* [Github Enterprise examples](#github-enterprise-examples)
+* [Update PATH used by Github Runners](#Update-path-used-by-github-runners)
+* [Adding environment variables to runner](#adding-environment-variables-to-runner)
+* [Limitations - OS compatibility, etc.](#limitations)
+* [Development - Guide for contributing to the module](#development)
+* [Transfer Notice](#transfer-notice)
 
 ## Description
 
@@ -108,7 +121,7 @@ github_actions_runner::instances:
 
 Note, your `personal_access_token` has to contain the `admin:enterprise` permission.
 
-### Update PATH used by Github Runners
+## Update PATH used by Github Runners
 
 By default, puppet will not modify the values that the runner scripts create when
 the runner is set.
@@ -162,3 +175,11 @@ There are a few guidelines that we need contributors to follow so that we can ha
 
 *GitHub Actions Runner* is available under the Apache License, Version 2.0. See LICENSE file
 for more info.
+
+## Transfer Notice
+
+This module was originally written by Telefonica:
+
+> https://github.com/Telefonica/puppet-github-actions-runner
+
+They archived the repository and Vox Pupuli forked it in August 2024.
