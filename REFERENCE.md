@@ -88,7 +88,7 @@ Data type: `String[1]`
 
 GitHub Actions runner offical package name.
 
-Default value: `'actions-runner-linux-x64'`
+Default value: `$facts['os']['architecture'] ? { /x86_64|amd64/ => 'actions-runner-linux-x64', 'aarch64' => 'actions-runner-linux-arm64'`
 
 ##### <a name="-github_actions_runner--package_ensure"></a>`package_ensure`
 

@@ -25,7 +25,7 @@ class github_actions_runner (
   String[1]                      $personal_access_token = 'PAT',
   Enum['present', 'absent']      $ensure = 'present',
   Stdlib::Absolutepath           $base_dir_name = '/some_dir/actions-runner',
-  String[1]                      $package_name = 'actions-runner-linux-x64',
+  String[1]                      $package_name = $facts['os']['architecture'] ? { /x86_64|amd64/ => 'actions-runner-linux-x64', 'aarch64' => 'actions-runner-linux-arm64' },
   String[1]                      $package_ensure = '2.319.1',
   String[1]                      $repository_url = 'https://github.com/actions/runner/releases/download',
   String[1]                      $user = 'root',
