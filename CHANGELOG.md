@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v1.1.0](https://github.com/voxpupuli/puppet-github_actions_runner/tree/v1.1.0) (2024-08-27)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-github_actions_runner/compare/v1.0.0...v1.1.0)
+
+**Implemented enhancements:**
+
+- Add ARM support [\#22](https://github.com/voxpupuli/puppet-github_actions_runner/pull/22) ([bastelfreak](https://github.com/bastelfreak))
+
+**Merged pull requests:**
+
+- puppetmodule.info: Switch to https links [\#21](https://github.com/voxpupuli/puppet-github_actions_runner/pull/21) ([bastelfreak](https://github.com/bastelfreak))
+
 ## [v1.0.0](https://github.com/voxpupuli/puppet-github_actions_runner/tree/v1.0.0) (2024-08-19)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-github_actions_runner/compare/0.10.0...v1.0.0)
