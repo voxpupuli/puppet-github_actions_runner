@@ -41,7 +41,7 @@ describe 'github_actions_runner' do
             'ensure' => 'directory',
             'owner'  => 'root',
             'group'  => 'root',
-            'mode'   => '0644'
+            'mode'   => '0750'
           )
         end
       end
@@ -56,7 +56,7 @@ describe 'github_actions_runner' do
             'ensure' => 'directory',
             'owner'  => 'root',
             'group'  => 'root',
-            'mode'   => '0644'
+            'mode'   => '0750'
           )
         end
       end
@@ -72,7 +72,7 @@ describe 'github_actions_runner' do
             'ensure' => 'directory',
             'owner'  => 'test_user',
             'group'  => 'test_group',
-            'mode'   => '0644'
+            'mode'   => '0750'
           )
         end
       end
@@ -83,7 +83,7 @@ describe 'github_actions_runner' do
             'ensure' => 'directory',
             'owner'  => 'root',
             'group'  => 'root',
-            'mode'   => '0644'
+            'mode'   => '0750'
           )
           is_expected.to contain_file('/some_dir/actions-runner-2.319.1/first_runner').that_requires(['File[/some_dir/actions-runner-2.319.1]'])
         end
@@ -100,7 +100,7 @@ describe 'github_actions_runner' do
             'ensure' => 'directory',
             'owner'  => 'test_user',
             'group'  => 'test_group',
-            'mode'   => '0644'
+            'mode'   => '0750'
           )
           is_expected.to contain_file('/some_dir/actions-runner-2.319.1/first_runner').that_requires(['File[/some_dir/actions-runner-2.319.1]'])
         end
