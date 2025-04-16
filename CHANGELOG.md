@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v1.2.0](https://github.com/voxpupuli/puppet-github_actions_runner/tree/v1.2.0) (2025-04-16)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-github_actions_runner/compare/v1.1.0...v1.2.0)
+
+This release fixes a [security issue](https://github.com/voxpupuli/puppet-github_actions_runner/security/advisories/GHSA-w79w-phhx-9j6m) where anyone with any level of SSH access on the runner host can retrieve the GitHub Personal Access Token (PAT) and other sensitive data from the node runner. The issue was fixed by using more restrictive directory permissions.
+
+**Implemented enhancements:**
+
+- Allow treating personal Github PAT as Sensitive [\#31](https://github.com/voxpupuli/puppet-github_actions_runner/pull/31) ([bfondevila](https://github.com/bfondevila))
+- metadata.json: Add OpenVox [\#29](https://github.com/voxpupuli/puppet-github_actions_runner/pull/29) ([jstraw](https://github.com/jstraw))
+
+**Fixed bugs:**
+
+- Adjust tests for new directory permissons [\#33](https://github.com/voxpupuli/puppet-github_actions_runner/pull/33) ([bastelfreak](https://github.com/bastelfreak))
+
+**Merged pull requests:**
+
+- puppet/systemd: allow 8.x [\#26](https://github.com/voxpupuli/puppet-github_actions_runner/pull/26) ([jay7x](https://github.com/jay7x))
+
 ## [v1.1.0](https://github.com/voxpupuli/puppet-github_actions_runner/tree/v1.1.0) (2024-08-27)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-github_actions_runner/compare/v1.0.0...v1.1.0)
