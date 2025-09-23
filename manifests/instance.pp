@@ -157,7 +157,7 @@ define github_actions_runner::instance (
   $content_path = $path ? {
     undef   => undef,
     default => epp('github_actions_runner/path.epp', {
-        paths => $path,
+      paths => $path,
     })
   }
 
@@ -176,7 +176,7 @@ define github_actions_runner::instance (
   $content_env = $env ? {
     undef   => undef,
     default => epp('github_actions_runner/env.epp', {
-        envs => $env,
+      envs => $env,
     })
   }
 
@@ -207,13 +207,13 @@ define github_actions_runner::instance (
     enable  => $enable_service,
     active  => $active_service,
     content => epp('github_actions_runner/github-actions-runner.service.epp', {
-        instance_name => $instance_name,
-        root_dir      => $github_actions_runner::root_dir,
-        user          => $user,
-        group         => $group,
-        http_proxy    => $http_proxy,
-        https_proxy   => $https_proxy,
-        no_proxy      => $no_proxy,
+      instance_name => $instance_name,
+      root_dir      => $github_actions_runner::root_dir,
+      user          => $user,
+      group         => $group,
+      http_proxy    => $http_proxy,
+      https_proxy   => $https_proxy,
+      no_proxy      => $no_proxy,
     }),
     require => [File["${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh"],
       File["${github_actions_runner::root_dir}/${instance_name}/.path"],
