@@ -1,0 +1,23 @@
+---
+# Default configuration for github_actions_runner module
+# These values can be overridden via Hiera or class parameters
+
+github_actions_runner::ensure: 'present'
+github_actions_runner::base_dir_name: '/opt/actions-runner'
+github_actions_runner::package_ensure: '2.319.1'
+github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
+github_actions_runner::user: 'root'
+github_actions_runner::group: 'root'
+github_actions_runner::github_domain: 'https://github.com'
+github_actions_runner::github_api: 'https://api.github.com'
+github_actions_runner::disable_update: false
+github_actions_runner::version_in_path: true
+github_actions_runner::instances: {}
+github_actions_runner::personal_access_token: ~
+github_actions_runner::org_name: ~
+github_actions_runner::enterprise_name: ~
+github_actions_runner::http_proxy: ~
+github_actions_runner::https_proxy: ~
+github_actions_runner::no_proxy: ~
+github_actions_runner::path: ~
+github_actions_runner::env: ~
