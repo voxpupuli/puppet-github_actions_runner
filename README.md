@@ -139,6 +139,42 @@ github_actions_runner::instances:
 
 **Note:** When `version_in_path: true` (default for backwards compatibility), the installation path includes the version (e.g., `/opt/actions-runner-2.319.1/`). Changing `package_ensure` creates a new directory and requires re-registration of all runners.
 
+#### Managing runner users
+
+For security, it's recommended to run runners as dedicated non-root users. The module can manage these users for you:
+
+```yaml
+github_actions_runner::users:
+  github-runner:
+    home: /home/github-runner
+    shell: /bin/bash
+  prod-runner:
+    home: /srv/prod-runner
+    groups:
+      - docker
+
+github_actions_runner::instances:
+  standard_runner:
+    repo_name: 'public-repo'
+    user: github-runner
+    repo_token: 'TOKEN1'
+
+  production_runner:
+    repo_name: 'production'
+    user: prod-runner
+    repo_token: 'TOKEN2'
+```
+
+**User attributes:**
+- `ensure`: present or absent (default: present)
+- `home`: Home directory path (default: /home/username)
+- `shell`: Login shell (default: /bin/bash)
+- `groups`: Additional groups for the user
+- `comment`: User comment field
+- All standard Puppet user resource attributes are supported
+
+**Note:** The module automatically creates a primary group with the same name as the user.
+
 #### Instance level overwrites
 ```yaml
 github_actions_runner::instances:

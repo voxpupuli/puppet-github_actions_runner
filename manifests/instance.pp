@@ -92,13 +92,28 @@ define github_actions_runner::instance (
     'absent'  => absent,
   }
 
+  # Determine if user is managed in init.pp
+  $user_managed = has_key($github_actions_runner::users, $user)
+  $group_managed = has_key($github_actions_runner::users, $group)
+
+  # Build dependencies based on user management
+  $base_requires = [File[$github_actions_runner::root_dir]]
+  $user_requires = $user_managed ? {
+    true  => $base_requires + [User[$user]],
+    false => $base_requires,
+  }
+  $all_requires = $group_managed ? {
+    true  => $user_requires + [Group[$group]],
+    false => $user_requires,
+  }
+
   file { "${github_actions_runner::root_dir}/${instance_name}":
     ensure  => $ensure_instance_directory,
     mode    => '0750',
     owner   => $user,
     group   => $group,
     force   => true,
-    require => File[$github_actions_runner::root_dir],
+    require => $all_requires,
   }
 
   archive { "${instance_name}-${archive_name}":

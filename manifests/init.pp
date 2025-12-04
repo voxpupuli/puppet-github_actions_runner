@@ -21,6 +21,7 @@
 # @param path List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created by the runner scripts. Default value: undef
 # @param env List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 # @param version_in_path Include package version in the root directory path. When false, enables runner self-updates without re-registration. Default: true (for backwards compatibility)
+# @param users Hash of users to create for running GitHub Actions runners. Key is username, value is hash of user attributes.
 #
 class github_actions_runner (
   Optional[Variant[Sensitive[String[1]],String[1]]] $personal_access_token = undef,
@@ -43,6 +44,7 @@ class github_actions_runner (
   Optional[Array[String]]        $path = undef,
   Optional[Hash[String, String]] $env = undef,
   Boolean                        $version_in_path,
+  Hash[String[1], Hash]          $users,
 ) {
   $root_dir = $version_in_path ? {
     true  => "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}",
@@ -52,6 +54,31 @@ class github_actions_runner (
   $ensure_directory = $github_actions_runner::ensure ? {
     'present' => directory,
     'absent'  => absent,
+  }
+
+  # Create users for runner instances
+  $users.each |String $username, Hash $user_config| {
+    $user_defaults = {
+      ensure     => 'present',
+      gid        => $username,
+      home       => "/home/${username}",
+      managehome => true,
+      shell      => '/bin/bash',
+      system     => true,
+      comment    => 'GitHub Actions Runner user',
+    }
+
+    # Create group first
+    group { $username:
+      ensure => pick($user_config['ensure'], 'present'),
+      system => true,
+    }
+
+    # Create user with merged config
+    user { $username:
+      *       => $user_defaults + $user_config,
+      require => Group[$username],
+    }
   }
 
   file { $github_actions_runner::root_dir:

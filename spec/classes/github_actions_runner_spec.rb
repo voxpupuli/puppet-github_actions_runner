@@ -302,6 +302,112 @@ describe 'github_actions_runner' do
           is_expected.to contain_github_actions_runner__instance('enterprise_runner')
         end
       end
+
+      context 'user management' do
+        context 'with single user' do
+          let(:params) do
+            super().merge(
+              'users' => {
+                'github-runner' => {
+                  'home' => '/home/github-runner',
+                  'shell' => '/bin/bash',
+                }
+              }
+            )
+          end
+
+          it 'creates group' do
+            is_expected.to contain_group('github-runner').with(
+              'ensure' => 'present',
+              'system' => true
+            )
+          end
+
+          it 'creates user with correct attributes' do
+            is_expected.to contain_user('github-runner').with(
+              'ensure' => 'present',
+              'gid' => 'github-runner',
+              'home' => '/home/github-runner',
+              'shell' => '/bin/bash',
+              'managehome' => true,
+              'system' => true,
+              'comment' => 'GitHub Actions Runner user'
+            )
+          end
+
+          it 'user requires group' do
+            is_expected.to contain_user('github-runner').that_requires('Group[github-runner]')
+          end
+        end
+
+        context 'with multiple users' do
+          let(:params) do
+            super().merge(
+              'users' => {
+                'runner1' => {},
+                'runner2' => {
+                  'home' => '/srv/runner2',
+                },
+                'runner3' => {
+                  'shell' => '/bin/zsh',
+                }
+              }
+            )
+          end
+
+          it 'creates all users' do
+            is_expected.to contain_user('runner1')
+            is_expected.to contain_user('runner2')
+            is_expected.to contain_user('runner3')
+          end
+
+          it 'creates all groups' do
+            is_expected.to contain_group('runner1')
+            is_expected.to contain_group('runner2')
+            is_expected.to contain_group('runner3')
+          end
+
+          it 'applies custom home directory' do
+            is_expected.to contain_user('runner2').with('home' => '/srv/runner2')
+          end
+
+          it 'applies custom shell' do
+            is_expected.to contain_user('runner3').with('shell' => '/bin/zsh')
+          end
+        end
+
+        context 'with no users defined' do
+          let(:params) do
+            super().merge('users' => {})
+          end
+
+          it 'does not create any users' do
+            catalogue.resources.select { |r| r.type == 'User' }.each do |user|
+              expect(user.title).not_to match(/runner/)
+            end
+          end
+        end
+
+        context 'user with ensure absent' do
+          let(:params) do
+            super().merge(
+              'users' => {
+                'old-runner' => {
+                  'ensure' => 'absent',
+                }
+              }
+            )
+          end
+
+          it 'removes user' do
+            is_expected.to contain_user('old-runner').with('ensure' => 'absent')
+          end
+
+          it 'removes group' do
+            is_expected.to contain_group('old-runner').with('ensure' => 'absent')
+          end
+        end
+      end
     end
   end
 end

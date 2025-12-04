@@ -13,6 +13,7 @@ github_actions_runner::github_api: 'https://api.github.com'
 github_actions_runner::disable_update: false
 github_actions_runner::version_in_path: true
 github_actions_runner::instances: {}
+github_actions_runner::users: {}
 github_actions_runner::personal_access_token: ~
 github_actions_runner::org_name: ~
 github_actions_runner::enterprise_name: ~
