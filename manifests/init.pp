@@ -37,7 +37,7 @@ class github_actions_runner (
   Boolean                        $disable_update,
   Boolean                        $version_in_path,
   Hash[String[1], Hash]          $users,
-  Variant[Sensitive[String[1]],String[1],Undef] $personal_access_token,
+  $personal_access_token,
   Optional[String[1]]            $enterprise_name,
   Optional[String[1]]            $org_name,
   Optional[String[1]]            $http_proxy,
