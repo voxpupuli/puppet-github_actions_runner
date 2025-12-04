@@ -104,6 +104,7 @@ github_actions_runner::instances:
 - The `personal_access_token` parameter is not required when using `repo_token`
 - Registration tokens are short-lived (typically 1 hour) and single-use
 - This method only works for repository-level runners
+- Proxy settings (`http_proxy`, `https_proxy`, `no_proxy`) are supported but only affect PAT-based authentication (not needed when using `repo_token`)
 
 #### Instance level overwrites
 ```yaml
