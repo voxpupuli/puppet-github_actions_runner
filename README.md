@@ -18,6 +18,7 @@ Automatic configuration for running GitHub Actions as a service
 * [Hiera configuration examples](#hiera-configuration-examples)
   * [Creating an organization level Actions runner](#creating-an-organization-level-actions-runner)
   * [Creating an additional repository level Actions runner](#creating-an-additional-repository-level-actions-runner)
+  * [Using manually generated runner tokens (without PAT)](#using-manually-generated-runner-tokens-without-pat)
   * [Instance level overwrites](#instance-level-overwrites)
   * [Adding a global proxy and overwriting an instance level proxy](#adding-a-global-proxy-and-overwriting-an-instance-level-proxy)
 * [Github Enterprise examples](#github-enterprise-examples)
@@ -69,6 +70,40 @@ github_actions_runner::instances:
 ```
 
 Note, your `personal_access_token` has to contain the `repo` permission.
+
+#### Using manually generated runner tokens (without PAT)
+
+Instead of using a Personal Access Token (PAT) that requires broad permissions, you can manually generate a registration token through the GitHub UI and provide it directly to the module. This is more secure and recommended for repository-level runners.
+
+**Steps to generate a runner token:**
+1. Navigate to your repository on GitHub
+2. Go to Settings > Actions > Runners
+3. Click "New self-hosted runner"
+4. Copy the registration token from the configuration command
+
+**Example configuration:**
+```yaml
+github_actions_runner::ensure: present
+github_actions_runner::base_dir_name: '/data/actions-runner'
+github_actions_runner::package_name: 'actions-runner-linux-x64'
+github_actions_runner::package_ensure: '2.277.1'
+github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
+github_actions_runner::org_name: 'my_github_organization'
+github_actions_runner::user: 'root'
+github_actions_runner::group: 'root'
+github_actions_runner::instances:
+  example_repo_instance:
+    repo_name: 'myrepo'
+    repo_token: 'AAAAABBBBBCCCCCDDDDD'  # Token from GitHub UI
+    labels:
+      - self-hosted-custom
+```
+
+**Important notes:**
+- When using `repo_token`, both `org_name` and `repo_name` must be specified
+- The `personal_access_token` parameter is not required when using `repo_token`
+- Registration tokens are short-lived (typically 1 hour) and single-use
+- This method only works for repository-level runners
 
 #### Instance level overwrites
 ```yaml
