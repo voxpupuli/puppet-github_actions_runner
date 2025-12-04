@@ -6,5 +6,7 @@ defaults:
   data_hash: yaml_data
 
 hierarchy:
+  - name: "Per architecture"
+    path: "os/%{facts.os.architecture}.yaml"
   - name: "Common defaults"
     path: "common.yaml"

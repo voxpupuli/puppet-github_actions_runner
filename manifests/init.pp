@@ -26,7 +26,7 @@
 class github_actions_runner (
   Enum['present', 'absent']      $ensure,
   Stdlib::Absolutepath           $base_dir_name,
-  String[1]                      $package_name = $facts['os']['architecture'] ? { /x86_64|amd64/ => 'actions-runner-linux-x64', 'aarch64' => 'actions-runner-linux-arm64' },
+  String[1]                      $package_name,
   String[1]                      $package_ensure,
   String[1]                      $repository_url,
   String[1]                      $user,
