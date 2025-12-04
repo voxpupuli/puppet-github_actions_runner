@@ -20,6 +20,7 @@
 # @param disable_update toggle for disabling automatic runner updates.
 # @param path List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created by the runner scripts. Default value: undef
 # @param env List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
+# @param version_in_path Include package version in the root directory path. When false, enables runner self-updates without re-registration. Default: true (for backwards compatibility)
 #
 class github_actions_runner (
   Variant[Sensitive[String[1]],String[1]] $personal_access_token = 'PAT',
@@ -41,8 +42,12 @@ class github_actions_runner (
   Boolean                        $disable_update = false,
   Optional[Array[String]]        $path = undef,
   Optional[Hash[String, String]] $env = undef,
+  Boolean                        $version_in_path = true,
 ) {
-  $root_dir = "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}"
+  $root_dir = $version_in_path ? {
+    true  => "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}",
+    false => $github_actions_runner::base_dir_name,
+  }
 
   $ensure_directory = $github_actions_runner::ensure ? {
     'present' => directory,

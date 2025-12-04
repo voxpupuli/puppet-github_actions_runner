@@ -105,6 +105,39 @@ github_actions_runner::instances:
 - Registration tokens are short-lived (typically 1 hour) and single-use
 - This method only works for repository-level runners
 - Proxy settings (`http_proxy`, `https_proxy`, `no_proxy`) are supported but only affect PAT-based authentication (not needed when using `repo_token`)
+- **Recommended:** Use `version_in_path: false` to enable runner self-updates without re-registration (see below)
+
+**Enabling automatic runner updates (recommended for repo_token):**
+
+When using manually generated tokens, you should enable runner self-updates to avoid re-registration:
+
+```yaml
+github_actions_runner::ensure: present
+github_actions_runner::base_dir_name: '/data/actions-runner'
+github_actions_runner::package_name: 'actions-runner-linux-x64'
+github_actions_runner::package_ensure: '2.319.1'
+github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
+github_actions_runner::org_name: 'my_github_organization'
+github_actions_runner::user: 'root'
+github_actions_runner::group: 'root'
+github_actions_runner::version_in_path: false  # Enables self-updates without re-registration
+github_actions_runner::disable_update: false   # Allow runner to self-update (default)
+github_actions_runner::instances:
+  example_repo_instance:
+    repo_name: 'myrepo'
+    repo_token: 'AAAAABBBBBCCCCCDDDDD'
+    labels:
+      - self-hosted-custom
+```
+
+**How it works:**
+- `version_in_path: false` - Runner installation path is `/data/actions-runner/` (without version suffix)
+- `disable_update: false` - Runners automatically update themselves when new versions are available
+- Each runner instance has its own directory: `/data/actions-runner/instance_name/`
+- The `_work/` directory (checkout cache, tools) is preserved across updates
+- No re-registration needed when runners update themselves
+
+**Note:** When `version_in_path: true` (default for backwards compatibility), the installation path includes the version (e.g., `/data/actions-runner-2.319.1/`). Changing `package_ensure` creates a new directory and requires re-registration of all runners.
 
 #### Instance level overwrites
 ```yaml
