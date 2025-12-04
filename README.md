@@ -40,7 +40,7 @@ This module supports configuration through hiera.
 
 ```yaml
 github_actions_runner::ensure: present
-github_actions_runner::base_dir_name: '/data/actions-runner'
+github_actions_runner::base_dir_name: '/opt/actions-runner'
 github_actions_runner::package_name: 'actions-runner-linux-x64'
 github_actions_runner::package_ensure: '2.277.1'
 github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
@@ -84,7 +84,7 @@ Instead of using a Personal Access Token (PAT) that requires broad permissions, 
 **Example configuration:**
 ```yaml
 github_actions_runner::ensure: present
-github_actions_runner::base_dir_name: '/data/actions-runner'
+github_actions_runner::base_dir_name: '/opt/actions-runner'
 github_actions_runner::package_name: 'actions-runner-linux-x64'
 github_actions_runner::package_ensure: '2.277.1'
 github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
@@ -113,7 +113,7 @@ When using manually generated tokens, you should enable runner self-updates to a
 
 ```yaml
 github_actions_runner::ensure: present
-github_actions_runner::base_dir_name: '/data/actions-runner'
+github_actions_runner::base_dir_name: '/opt/actions-runner'
 github_actions_runner::package_name: 'actions-runner-linux-x64'
 github_actions_runner::package_ensure: '2.319.1'
 github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
@@ -131,13 +131,13 @@ github_actions_runner::instances:
 ```
 
 **How it works:**
-- `version_in_path: false` - Runner installation path is `/data/actions-runner/` (without version suffix)
+- `version_in_path: false` - Runner installation path is `/opt/actions-runner/` (without version suffix)
 - `disable_update: false` - Runners automatically update themselves when new versions are available
-- Each runner instance has its own directory: `/data/actions-runner/instance_name/`
+- Each runner instance has its own directory: `/opt/actions-runner/instance_name/`
 - The `_work/` directory (checkout cache, tools) is preserved across updates
 - No re-registration needed when runners update themselves
 
-**Note:** When `version_in_path: true` (default for backwards compatibility), the installation path includes the version (e.g., `/data/actions-runner-2.319.1/`). Changing `package_ensure` creates a new directory and requires re-registration of all runners.
+**Note:** When `version_in_path: true` (default for backwards compatibility), the installation path includes the version (e.g., `/opt/actions-runner-2.319.1/`). Changing `package_ensure` creates a new directory and requires re-registration of all runners.
 
 #### Instance level overwrites
 ```yaml
@@ -177,7 +177,7 @@ In addition to the runner configuration examples above, you can also configure r
 on the enterprise level by setting a value for `enterprise_name`, for example:
 ```yaml
 github_actions_runner::ensure: present
-github_actions_runner::base_dir_name: '/data/actions-runner'
+github_actions_runner::base_dir_name: '/opt/actions-runner'
 github_actions_runner::package_name: 'actions-runner-linux-x64'
 github_actions_runner::package_ensure: '2.277.1'
 github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
