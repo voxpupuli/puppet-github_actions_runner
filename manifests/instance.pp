@@ -125,6 +125,9 @@ define github_actions_runner::instance (
     assured_labels        => $assured_labels,
     disable_update        => $disable_update,
     runner_group          => $runner_group,
+    http_proxy            => $http_proxy,
+    https_proxy           => $https_proxy,
+    no_proxy              => $no_proxy,
   }
   file { "${github_actions_runner::root_dir}/${name}/configure_install_runner.sh":
     ensure  => $ensure,
