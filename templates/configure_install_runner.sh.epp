@@ -1,5 +1,5 @@
 <%- | Variant[Sensitive,String] $personal_access_token,
-      String $token_url,
+      Optional[String] $token_url = undef,
       String $instance_name,
       String $root_dir,
       String $url,
