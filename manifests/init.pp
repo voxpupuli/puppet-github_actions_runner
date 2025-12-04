@@ -24,7 +24,6 @@
 # @param users Hash of users to create for running GitHub Actions runners. Key is username, value is hash of user attributes.
 #
 class github_actions_runner (
-  Optional[Variant[Sensitive[String[1]],String[1]]] $personal_access_token = undef,
   Enum['present', 'absent']      $ensure,
   Stdlib::Absolutepath           $base_dir_name,
   String[1]                      $package_name = $facts['os']['architecture'] ? { /x86_64|amd64/ => 'actions-runner-linux-x64', 'aarch64' => 'actions-runner-linux-arm64' },
@@ -35,16 +34,17 @@ class github_actions_runner (
   Hash[String[1], Hash]          $instances,
   String[1]                      $github_domain,
   String[1]                      $github_api,
-  Optional[String[1]]            $enterprise_name = undef,
-  Optional[String[1]]            $org_name = undef,
-  Optional[String[1]]            $http_proxy = undef,
-  Optional[String[1]]            $https_proxy = undef,
-  Optional[String[1]]            $no_proxy = undef,
   Boolean                        $disable_update,
-  Optional[Array[String]]        $path = undef,
-  Optional[Hash[String, String]] $env = undef,
   Boolean                        $version_in_path,
   Hash[String[1], Hash]          $users,
+  Optional[Variant[Sensitive[String[1]],String[1]]] $personal_access_token,
+  Optional[String[1]]            $enterprise_name,
+  Optional[String[1]]            $org_name,
+  Optional[String[1]]            $http_proxy,
+  Optional[String[1]]            $https_proxy,
+  Optional[String[1]]            $no_proxy,
+  Optional[Array[String]]        $path,
+  Optional[Hash[String, String]] $env,
 ) {
   $root_dir = $version_in_path ? {
     true  => "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}",
