@@ -93,8 +93,8 @@ define github_actions_runner::instance (
   }
 
   # Determine if user is managed in init.pp
-  $user_managed = has_key($github_actions_runner::users, $user)
-  $group_managed = has_key($github_actions_runner::users, $group)
+  $user_managed = $user in $github_actions_runner::users
+  $group_managed = $group in $github_actions_runner::users
 
   # Build dependencies based on user management
   $base_requires = [File[$github_actions_runner::root_dir]]
