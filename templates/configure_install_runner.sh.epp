@@ -17,10 +17,7 @@
 # Configure the action runner after the package file has been downloaded.
 set -e
 
-<% if $repo_token { -%>
-TOKEN=<%= $repo_token %>
-<% } else {-%>
-# Get registration token.
+# Set proxy environment variables if configured.
 <% if $http_proxy { -%>
 export http_proxy="<%= $http_proxy %>"
 <% } -%>
@@ -30,6 +27,12 @@ export https_proxy="<%= $https_proxy %>"
 <% if $no_proxy { -%>
 export no_proxy="<%= $no_proxy %>"
 <% } -%>
+
+<% if $repo_token { -%>
+# Use manually provided registration token.
+TOKEN=<%= $repo_token %>
+<% } else {-%>
+# Get registration token via API.
 TOKEN=$(curl -s -XPOST -H "authorization: token <%= $personal_access_token %>"  \
     <%= $token_url %> | jq -r .token)
 <% } -%>
