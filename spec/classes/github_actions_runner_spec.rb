@@ -383,7 +383,7 @@ describe 'github_actions_runner' do
 
           it 'does not create any users' do
             catalogue.resources.select { |r| r.type == 'User' }.each do |user|
-              expect(user.title).not_to match(/runner/)
+              expect(user.title).not_to match(%r{runner})
             end
           end
         end

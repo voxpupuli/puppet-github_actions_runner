@@ -55,23 +55,23 @@ describe 'github_actions_runner::instance' do
 
       context 'configure script content for PAT authentication' do
         it 'contains curl command for token fetching' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{curl -s -XPOST -H "authorization: token PAT"})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{curl -s -XPOST -H "authorization: token PAT"})
         end
 
         it 'contains correct token URL for repo' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{https://api.github.com/repos/test_org/test_repo/actions/runners/registration-token})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{https://api.github.com/repos/test_org/test_repo/actions/runners/registration-token})
         end
 
         it 'contains correct repository URL' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{--url https://github.com/test_org/test_repo})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{--url https://github.com/test_org/test_repo})
         end
 
         it 'contains labels' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{--labels test_label1,test_label2})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{--labels test_label1,test_label2})
         end
       end
 
@@ -85,18 +85,18 @@ describe 'github_actions_runner::instance' do
         it { is_expected.to compile.with_all_deps }
 
         it 'uses direct token assignment' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{TOKEN=MANUAL_TOKEN_12345})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{TOKEN=MANUAL_TOKEN_12345})
         end
 
         it 'does not contain curl command' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .without_content(%r{curl})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            without_content(%r{curl})
         end
 
         it 'does not fetch token from API' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .without_content(%r{registration-token})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            without_content(%r{registration-token})
         end
       end
 
@@ -108,8 +108,8 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'handles sensitive repo_token correctly' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{TOKEN=SENSITIVE_TOKEN_999})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{TOKEN=SENSITIVE_TOKEN_999})
         end
       end
 
@@ -149,23 +149,23 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'exports http_proxy before curl' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{export http_proxy="http://proxy.local:8080"})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{export http_proxy="http://proxy.local:8080"})
         end
 
         it 'exports https_proxy before curl' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{export https_proxy="https://proxy.local:8443"})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{export https_proxy="https://proxy.local:8443"})
         end
 
         it 'exports no_proxy before curl' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{export no_proxy="localhost,example.com"})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{export no_proxy="localhost,example.com"})
         end
 
         it 'still contains curl command' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{curl})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{curl})
         end
       end
 
@@ -178,14 +178,14 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'does not export proxy variables when using repo_token' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .without_content(%r{export http_proxy})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            without_content(%r{export http_proxy})
         end
 
         it 'uses direct token without curl' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{TOKEN=MANUAL_TOKEN})
-            .without_content(%r{curl})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{TOKEN=MANUAL_TOKEN}).
+            without_content(%r{curl})
         end
       end
 
@@ -198,13 +198,13 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'uses org token URL' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{https://api.github.com/orgs/test_org/actions/runners/registration-token})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{https://api.github.com/orgs/test_org/actions/runners/registration-token})
         end
 
         it 'uses org URL' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{--url https://github.com/test_org})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{--url https://github.com/test_org})
         end
       end
 
@@ -219,13 +219,13 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'uses enterprise token URL' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{https://api.github.com/enterprises/test_enterprise/actions/runners/registration-token})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{https://api.github.com/enterprises/test_enterprise/actions/runners/registration-token})
         end
 
         it 'uses enterprise URL' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{--url https://github.com/enterprises/test_enterprise})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{--url https://github.com/enterprises/test_enterprise})
         end
       end
 
@@ -237,8 +237,8 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'includes disableupdate flag' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{--disableupdate})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{--disableupdate})
         end
       end
 
@@ -250,8 +250,8 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'includes runnergroup flag' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{--runnergroup MyRunnerGroup})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{--runnergroup MyRunnerGroup})
         end
       end
 
@@ -277,7 +277,7 @@ describe 'github_actions_runner::instance' do
         end
       end
 
-      context '.path file management' do
+      describe '.path file management' do
         it 'creates .path file' do
           is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/.path').with(
             'ensure' => 'present',
@@ -295,13 +295,13 @@ describe 'github_actions_runner::instance' do
           end
 
           it 'sets custom PATH content' do
-            is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/.path')
-              .with_content("/custom/bin:/usr/local/bin\n")
+            is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/.path').
+              with_content("/custom/bin:/usr/local/bin\n")
           end
         end
       end
 
-      context '.env file management' do
+      describe '.env file management' do
         it 'creates .env file' do
           is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/.env').with(
             'ensure' => 'present',
@@ -322,9 +322,9 @@ describe 'github_actions_runner::instance' do
           end
 
           it 'sets custom env content' do
-            is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/.env')
-              .with_content(%r{FOO=bar})
-              .with_content(%r{BAZ=qux})
+            is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/.env').
+              with_content(%r{FOO=bar}).
+              with_content(%r{BAZ=qux})
           end
         end
       end
@@ -348,10 +348,10 @@ describe 'github_actions_runner::instance' do
           end
 
           it 'includes proxy environment variables in service' do
-            is_expected.to contain_systemd__unit_file('github-actions-runner.test_runner.service')
-              .with_content(%r{Environment="http_proxy=http://proxy.local"})
-              .with_content(%r{Environment="https_proxy=http://proxy.local"})
-              .with_content(%r{Environment="no_proxy=example.com"})
+            is_expected.to contain_systemd__unit_file('github-actions-runner.test_runner.service').
+              with_content(%r{Environment="http_proxy=http://proxy.local"}).
+              with_content(%r{Environment="https_proxy=http://proxy.local"}).
+              with_content(%r{Environment="no_proxy=example.com"})
           end
         end
       end
@@ -391,13 +391,13 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'uses custom domain in URL' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{--url https://git.example.com/test_org/test_repo})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{--url https://git.example.com/test_org/test_repo})
         end
 
         it 'uses custom API endpoint' do
-          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh')
-            .with_content(%r{https://git.example.com/api/v3/repos/test_org/test_repo})
+          is_expected.to contain_file('/some_dir/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            with_content(%r{https://git.example.com/api/v3/repos/test_org/test_repo})
         end
       end
     end
