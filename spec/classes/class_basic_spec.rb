@@ -13,9 +13,9 @@ describe 'github_actions_runner' do
           'instances' => {
             'test_runner' => {
               'labels' => %w[test_label1 test_label2],
-              'repo_name' => 'test_repo',
-            },
-          },
+              'repo_name' => 'test_repo'
+            }
+          }
         }
       end
 
@@ -105,12 +105,12 @@ describe 'github_actions_runner' do
               'instances' => {
                 'runner1' => {
                   'repo_name' => 'repo1',
-                  'labels' => ['label1'],
+                  'labels' => ['label1']
                 },
                 'runner2' => {
                   'repo_name' => 'repo2',
-                  'labels' => ['label2'],
-                },
+                  'labels' => ['label2']
+                }
               }
             )
           end
