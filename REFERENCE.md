@@ -371,7 +371,7 @@ Default value: `undef`
 
 ##### <a name="-github_actions_runner--instance--repo_token"></a>`repo_token`
 
-Data type: `Any`
+Data type: `Optional[Any]`
 
 Manually generated registration token from GitHub UI. If set, PAT authentication is skipped. Requires both org_name and repo_name to be set.
 
