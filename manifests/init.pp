@@ -39,7 +39,7 @@ class github_actions_runner (
   Boolean                        $logoutput,
   Boolean                        $version_in_path,
   Hash[String[1], Hash]          $users,
-  $personal_access_token,
+  Any                            $personal_access_token,
   Optional[String[1]]            $enterprise_name,
   Optional[String[1]]            $org_name,
   Optional[String[1]]            $http_proxy,

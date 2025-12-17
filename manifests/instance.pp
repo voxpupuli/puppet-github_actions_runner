@@ -26,8 +26,8 @@
 #
 define github_actions_runner::instance (
   Enum['present', 'absent']      $ensure                = 'present',
-  $personal_access_token = $github_actions_runner::personal_access_token,
-  $repo_token = undef,
+  Any                            $personal_access_token = $github_actions_runner::personal_access_token,
+  Any                            $repo_token            = undef,
   String[1]                      $user                  = $github_actions_runner::user,
   String[1]                      $group                 = $github_actions_runner::group,
   String[1]                      $hostname              = $facts['networking']['hostname'],
@@ -118,6 +118,12 @@ define github_actions_runner::instance (
     require => $all_requires,
   }
 
+  # Set proxy_type based on http_proxy setting
+  $proxy_type = $http_proxy ? {
+    undef   => undef,
+    default => 'http',
+  }
+
   archive { "${instance_name}-${archive_name}":
     ensure       => $ensure,
     path         => "/tmp/${instance_name}-${archive_name}",
@@ -129,10 +135,7 @@ define github_actions_runner::instance (
     creates      => "${github_actions_runner::root_dir}/${instance_name}/bin",
     cleanup      => true,
     proxy_server => $http_proxy,
-    proxy_type   => $http_proxy ? {
-      undef   => undef,
-      default => 'http',
-    },
+    proxy_type   => $proxy_type,
     require      => File["${github_actions_runner::root_dir}/${instance_name}"],
   }
 
