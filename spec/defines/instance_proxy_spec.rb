@@ -8,6 +8,7 @@ describe 'github_actions_runner::instance' do
     <<-PUPPET
     class { 'github_actions_runner':
       org_name => 'test_org',
+      personal_access_token => 'PAT',
     }
     PUPPET
   end

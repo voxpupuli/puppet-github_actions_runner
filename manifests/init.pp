@@ -91,5 +91,22 @@ class github_actions_runner (
     force  => true,
   }
 
-  create_resources(github_actions_runner::instance, $github_actions_runner::instances)
+  # Create instances with proper dependencies on managed users
+  $github_actions_runner::instances.each |String $instance_name, Hash $instance_config| {
+    # Check if this instance uses a managed user
+    $instance_user = $instance_config['user'] ? {
+      undef   => $github_actions_runner::user,
+      default => $instance_config['user'],
+    }
+
+    $user_dependency = ($instance_user in $github_actions_runner::users) ? {
+      true  => [User[$instance_user]],
+      false => [],
+    }
+
+    github_actions_runner::instance { $instance_name:
+      *       => $instance_config,
+      require => $user_dependency,
+    }
+  }
 }
