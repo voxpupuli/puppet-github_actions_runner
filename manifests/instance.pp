@@ -16,6 +16,7 @@
 # @param https_proxy Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 # @param no_proxy Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 # @param disable_update toggle for disabling automatic runner updates.
+# @param logoutput Enable or disable output logging for the configure_install_runner.sh script. (Default: Value set by github_actions_runner Class)
 # @param repo_name actions runner repository name.
 # @param labels A list of costum lables to add to a runner.
 # @param path List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
@@ -37,6 +38,7 @@ define github_actions_runner::instance (
   Optional[String[1]]            $https_proxy           = $github_actions_runner::https_proxy,
   Optional[String[1]]            $no_proxy              = $github_actions_runner::no_proxy,
   Optional[Boolean]              $disable_update        = $github_actions_runner::disable_update,
+  Boolean                        $logoutput             = $github_actions_runner::logoutput,
   Optional[Array[String[1]]]     $labels                = undef,
   Optional[String[1]]            $enterprise_name       = $github_actions_runner::enterprise_name,
   Optional[String[1]]            $org_name              = $github_actions_runner::org_name,
@@ -187,6 +189,7 @@ define github_actions_runner::instance (
     refreshonly => true,
     path        => ['/bin', '/usr/bin'],
     onlyif      => "test -d ${github_actions_runner::root_dir}/${instance_name}",
+    logoutput   => $logoutput,
   }
 
   $content_path = $path ? {

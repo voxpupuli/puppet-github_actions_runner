@@ -18,6 +18,7 @@
 # @param https_proxy  Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 # @param no_proxy Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 # @param disable_update toggle for disabling automatic runner updates.
+# @param logoutput Enable or disable output logging for the configure_install_runner.sh script. When enabled, stdout/stderr are visible in Puppet logs. Default: true
 # @param path List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created by the runner scripts. Default value: undef
 # @param env List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 # @param version_in_path Include package version in the root directory path. When false, enables runner self-updates without re-registration. Default: true (for backwards compatibility)
@@ -35,6 +36,7 @@ class github_actions_runner (
   String[1]                      $github_domain,
   String[1]                      $github_api,
   Boolean                        $disable_update,
+  Boolean                        $logoutput,
   Boolean                        $version_in_path,
   Hash[String[1], Hash]          $users,
   $personal_access_token,

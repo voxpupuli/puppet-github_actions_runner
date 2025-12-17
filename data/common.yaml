@@ -12,6 +12,7 @@ github_actions_runner::group: 'root'
 github_actions_runner::github_domain: 'https://github.com'
 github_actions_runner::github_api: 'https://api.github.com'
 github_actions_runner::disable_update: false
+github_actions_runner::logoutput: true
 github_actions_runner::version_in_path: true
 github_actions_runner::instances: {}
 github_actions_runner::users: {}
