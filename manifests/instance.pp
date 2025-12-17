@@ -27,7 +27,7 @@
 define github_actions_runner::instance (
   Enum['present', 'absent']      $ensure                = 'present',
   Any                            $personal_access_token = $github_actions_runner::personal_access_token,
-  Any                            $repo_token            = undef,
+  Optional[Any]                  $repo_token            = undef,
   String[1]                      $user                  = $github_actions_runner::user,
   String[1]                      $group                 = $github_actions_runner::group,
   String[1]                      $hostname              = $facts['networking']['hostname'],
