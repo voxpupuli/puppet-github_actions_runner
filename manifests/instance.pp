@@ -22,7 +22,7 @@
 # @param path List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 # @param env List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 # @param runner_group The github runner group to add the runner to.
-# @param repo_token Manually generated registration token from GitHub UI. If set, PAT authentication is skipped. Requires both org_name and repo_name to be set.
+# @param repo_token Runner registration token from repository settings. If set, PAT authentication is skipped. Requires both org_name and repo_name to be set.
 #
 define github_actions_runner::instance (
   Enum['present', 'absent']      $ensure                = 'present',

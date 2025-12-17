@@ -71,11 +71,11 @@ github_actions_runner::instances:
 
 Note, your `personal_access_token` has to contain the `repo` permission.
 
-#### Using manually generated runner tokens (without PAT)
+#### Using runner registration tokens (without PAT)
 
-Instead of using a Personal Access Token (PAT) that requires broad permissions, you can manually generate a registration token through the GitHub UI and provide it directly to the module. This is more secure and recommended for repository-level runners.
+Instead of using a Personal Access Token (PAT) that requires broad permissions, you can provide a runner registration token directly to the module. This is more secure and recommended for repository-level runners.
 
-**Steps to generate a runner token:**
+**Steps to generate a runner registration token:**
 1. Navigate to your repository on GitHub
 2. Go to Settings > Actions > Runners
 3. Click "New self-hosted runner"
@@ -94,7 +94,7 @@ github_actions_runner::group: 'root'
 github_actions_runner::instances:
   example_repo_instance:
     repo_name: 'myrepo'
-    repo_token: 'AAAAABBBBBCCCCCDDDDD'  # Token from GitHub UI
+    repo_token: 'AAAAABBBBBCCCCCDDDDD'  # Runner registration token
     labels:
       - self-hosted-custom
 ```

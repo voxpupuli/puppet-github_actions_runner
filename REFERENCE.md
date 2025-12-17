@@ -373,7 +373,7 @@ Default value: `undef`
 
 Data type: `Optional[Any]`
 
-Manually generated registration token from GitHub UI. If set, PAT authentication is skipped. Requires both org_name and repo_name to be set.
+Runner registration token from repository settings. If set, PAT authentication is skipped. Requires both org_name and repo_name to be set.
 
 Default value: `undef`
 
