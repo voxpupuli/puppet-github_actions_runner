@@ -83,7 +83,7 @@ describe 'github_actions_runner::instance' do
           let(:params) do
             super().merge(
               'org_name' => :undef,
-              'repo_token' => 'TOKEN123',
+              'repo_token' => 'TOKEN123'
             )
           end
 
@@ -96,7 +96,7 @@ describe 'github_actions_runner::instance' do
           let(:params) do
             super().merge(
               'repo_name' => :undef,
-              'repo_token' => 'TOKEN123',
+              'repo_token' => 'TOKEN123'
             )
           end
 
@@ -127,7 +127,7 @@ describe 'github_actions_runner::instance' do
           super().merge(
             'org_name' => :undef,
             'enterprise_name' => 'test_enterprise',
-            'repo_name' => :undef,
+            'repo_name' => :undef
           )
         end
 
@@ -170,7 +170,7 @@ describe 'github_actions_runner::instance' do
         let(:params) do
           super().merge(
             'github_domain' => 'https://git.example.com',
-            'github_api' => 'https://git.example.com/api/v3',
+            'github_api' => 'https://git.example.com/api/v3'
           )
         end
 

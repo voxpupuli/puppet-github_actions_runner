@@ -29,7 +29,7 @@ describe 'github_actions_runner::instance' do
           super().merge(
             'http_proxy' => 'http://proxy.local:8080',
             'https_proxy' => 'https://proxy.local:8443',
-            'no_proxy' => 'localhost,example.com',
+            'no_proxy' => 'localhost,example.com'
           )
         end
 
@@ -56,7 +56,7 @@ describe 'github_actions_runner::instance' do
         it 'configures archive resource with proxy' do
           is_expected.to contain_archive('test_runner-actions-runner-linux-x64-2.319.1.tar.gz').with(
             'proxy_server' => 'http://proxy.local:8080',
-            'proxy_type' => 'http',
+            'proxy_type' => 'http'
           )
         end
       end
@@ -65,7 +65,7 @@ describe 'github_actions_runner::instance' do
         let(:params) do
           super().merge(
             'repo_token' => 'MANUAL_TOKEN',
-            'http_proxy' => 'http://proxy.local:8080',
+            'http_proxy' => 'http://proxy.local:8080'
           )
         end
 
@@ -83,7 +83,7 @@ describe 'github_actions_runner::instance' do
         it 'still configures archive resource with proxy' do
           is_expected.to contain_archive('test_runner-actions-runner-linux-x64-2.319.1.tar.gz').with(
             'proxy_server' => 'http://proxy.local:8080',
-            'proxy_type' => 'http',
+            'proxy_type' => 'http'
           )
         end
       end
@@ -93,7 +93,7 @@ describe 'github_actions_runner::instance' do
           super().merge(
             'http_proxy' => 'http://proxy.local',
             'https_proxy' => 'http://proxy.local',
-            'no_proxy' => 'example.com',
+            'no_proxy' => 'example.com'
           )
         end
 
@@ -117,7 +117,7 @@ describe 'github_actions_runner::instance' do
         it 'does not set proxy_server in archive resource' do
           is_expected.to contain_archive('test_runner-actions-runner-linux-x64-2.319.1.tar.gz').with(
             'proxy_server' => nil,
-            'proxy_type' => nil,
+            'proxy_type' => nil
           )
         end
 

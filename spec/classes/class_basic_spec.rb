@@ -43,7 +43,7 @@ describe 'github_actions_runner' do
               'ensure' => 'directory',
               'owner' => 'root',
               'group' => 'root',
-              'mode' => '0750',
+              'mode' => '0750'
             )
           end
         end
@@ -58,7 +58,7 @@ describe 'github_actions_runner' do
               'ensure' => 'directory',
               'owner' => 'root',
               'group' => 'root',
-              'mode' => '0750',
+              'mode' => '0750'
             )
           end
 
@@ -74,7 +74,7 @@ describe 'github_actions_runner' do
 
           it 'creates directory at custom location' do
             is_expected.to contain_file('/custom/runner-2.319.1').with(
-              'ensure' => 'directory',
+              'ensure' => 'directory'
             )
           end
         end
@@ -88,7 +88,7 @@ describe 'github_actions_runner' do
 
           it 'creates directory with new version' do
             is_expected.to contain_file('/opt/actions-runner-3.0.0').with(
-              'ensure' => 'directory',
+              'ensure' => 'directory'
             )
           end
         end
@@ -111,7 +111,7 @@ describe 'github_actions_runner' do
                   'repo_name' => 'repo2',
                   'labels' => ['label2'],
                 },
-              },
+              }
             )
           end
 
@@ -139,7 +139,7 @@ describe 'github_actions_runner' do
 
         it 'removes root directory' do
           is_expected.to contain_file('/opt/actions-runner-2.319.1').with(
-            'ensure' => 'absent',
+            'ensure' => 'absent'
           )
         end
       end

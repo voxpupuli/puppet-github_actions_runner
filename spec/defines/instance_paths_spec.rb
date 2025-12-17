@@ -30,7 +30,7 @@ describe 'github_actions_runner::instance' do
             'ensure' => 'present',
             'owner' => 'root',
             'group' => 'root',
-            'mode' => '0644',
+            'mode' => '0644'
           )
         end
 
@@ -59,7 +59,7 @@ describe 'github_actions_runner::instance' do
             'ensure' => 'present',
             'owner' => 'root',
             'group' => 'root',
-            'mode' => '0644',
+            'mode' => '0644'
           )
         end
 
@@ -69,7 +69,7 @@ describe 'github_actions_runner::instance' do
               'env' => {
                 'FOO' => 'bar',
                 'BAZ' => 'qux',
-              },
+              }
             )
           end
 
