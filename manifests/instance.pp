@@ -196,7 +196,7 @@ define github_actions_runner::instance (
   }
 
   $content_path = $path ? {
-    undef   => undef,
+    undef   => '',
     default => epp('github_actions_runner/path.epp', {
       paths => $path,
     })
@@ -215,7 +215,7 @@ define github_actions_runner::instance (
   }
 
   $content_env = $env ? {
-    undef   => undef,
+    undef   => '',
     default => epp('github_actions_runner/env.epp', {
       envs => $env,
     })

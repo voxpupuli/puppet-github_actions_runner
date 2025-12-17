@@ -81,11 +81,21 @@ describe 'github_actions_runner::instance' do
         end
 
         context 'without org_name' do
+          let(:pre_condition) do
+            <<-PUPPET
+            class { 'github_actions_runner':
+              enterprise_name => 'test_enterprise',
+              personal_access_token => 'PAT',
+            }
+            PUPPET
+          end
+
           let(:params) do
-            super().merge(
-              'org_name' => :undef,
-              'repo_token' => 'TOKEN123'
-            )
+            {
+              'repo_name' => 'test_repo',
+              'repo_token' => 'TOKEN123',
+              'labels' => %w[test_label1 test_label2]
+            }
           end
 
           it 'fails with validation error' do
@@ -95,14 +105,15 @@ describe 'github_actions_runner::instance' do
 
         context 'without repo_name' do
           let(:params) do
-            super().merge(
-              'repo_name' => :undef,
-              'repo_token' => 'TOKEN123'
-            )
+            {
+              'org_name' => 'test_org',
+              'repo_token' => 'TOKEN123',
+              'labels' => %w[test_label1 test_label2]
+            }
           end
 
           it 'fails validation for missing repo_name' do
-            is_expected.to compile.and_raise_error(%r{parameter 'repo_name'})
+            is_expected.to compile.and_raise_error(%r{When using 'repo_token', both 'org_name' and 'repo_name' are required})
           end
         end
       end
@@ -124,12 +135,20 @@ describe 'github_actions_runner::instance' do
       end
 
       describe 'enterprise level runner' do
+        let(:pre_condition) do
+          <<-PUPPET
+          class { 'github_actions_runner':
+            enterprise_name => 'test_enterprise',
+            personal_access_token => 'PAT',
+          }
+          PUPPET
+        end
+
         let(:params) do
-          super().merge(
-            'org_name' => :undef,
+          {
             'enterprise_name' => 'test_enterprise',
-            'repo_name' => :undef
-          )
+            'labels' => %w[test_label1 test_label2]
+          }
         end
 
         it 'uses enterprise registration token API endpoint' do
