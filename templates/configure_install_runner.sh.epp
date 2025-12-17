@@ -1,4 +1,4 @@
-<%- | Any $personal_access_token,
+<%- | Any $personal_access_token = undef,
       Optional[String] $token_url = undef,
       String $instance_name,
       String $root_dir,
