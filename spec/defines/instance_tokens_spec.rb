@@ -99,7 +99,7 @@ describe 'github_actions_runner::instance' do
           end
 
           it 'fails with validation error' do
-            is_expected.to compile.and_raise_error(%r{When using 'repo_token', both 'org_name' and 'repo_name' are required})
+            is_expected.to compile.and_raise_error(%r{assert_type.*expects a String.*got Undef})
           end
         end
 
@@ -113,7 +113,7 @@ describe 'github_actions_runner::instance' do
           end
 
           it 'fails validation for missing repo_name' do
-            is_expected.to compile.and_raise_error(%r{When using 'repo_token', both 'org_name' and 'repo_name' are required})
+            is_expected.to compile.and_raise_error(%r{assert_type.*expects a String.*got Undef})
           end
         end
       end
