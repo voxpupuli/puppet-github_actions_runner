@@ -24,6 +24,7 @@ Automatic configuration for running GitHub Actions as a service
 * [Github Enterprise examples](#github-enterprise-examples)
 * [Update PATH used by Github Runners](#Update-path-used-by-github-runners)
 * [Adding environment variables to runner](#adding-environment-variables-to-runner)
+* [Local Testing with Vagrant](#local-testing-with-vagrant)
 * [Limitations - OS compatibility, etc.](#limitations)
 * [Development - Guide for contributing to the module](#development)
 * [Transfer Notice](#transfer-notice)
@@ -189,6 +190,8 @@ github_actions_runner::instances:
       - self-hosted-custom2
 ```
 
+**Note on `ensure: absent`:** When removing a runner instance, the module automatically deregisters the runner from GitHub before deleting the files. This ensures clean removal without leaving orphaned runners in your GitHub settings.
+
 #### Adding a global proxy and overwriting an instance level proxy
 ```yaml
 github_actions_runner::http_proxy: http://proxy.local
@@ -266,6 +269,44 @@ github_actions_runner::env:
   FOO: "bar"
 ```
 
+
+## Local Testing with Vagrant
+
+For local development and testing, this module includes a Vagrant-based testing environment. This is particularly useful for testing changes before deploying to production.
+
+### Quick Start
+
+```bash
+cd examples/
+vagrant up
+vagrant ssh
+```
+
+### Requirements
+
+- **Vagrant** 2.4.0 or later
+- **VMware Fusion** 13+ (for M2 Mac) or **VirtualBox** (for Intel/AMD)
+- Minimum 2GB RAM, 2 CPU cores for the VM
+
+### Configuration
+
+1. The VM automatically syncs the module directory - changes on your host are immediately visible in the VM
+2. Edit Hiera configuration inside the VM:
+   ```bash
+   sudo vim /etc/puppetlabs/code/environments/production/data/common.yaml
+   ```
+3. Set your authentication (PAT or runner registration token)
+4. Test with dry-run:
+   ```bash
+   cd /etc/puppetlabs/code/modules/github_actions_runner/examples
+   puppet apply --modulepath=/etc/puppetlabs/code/modules --environment production apply_test.pp --noop
+   ```
+5. Apply configuration:
+   ```bash
+   puppet apply --modulepath=/etc/puppetlabs/code/modules --environment production apply_test.pp
+   ```
+
+For detailed instructions, see `examples/README.md`.
 
 ## Limitations
 

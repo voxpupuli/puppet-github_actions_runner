@@ -1,0 +1,33 @@
+---
+# GitHub Actions Runner Configuration
+# Edit this file to configure your runner
+
+# Organization name (required for PAT authentication, optional for repo_token)
+# github_actions_runner::org_name: 'test-org'
+
+# Personal Access Token (PAT) - Option 1
+# Uncomment and set your PAT token for automatic token generation
+# github_actions_runner::personal_access_token: 'ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+
+# Runner settings
+github_actions_runner::version_in_path: false
+github_actions_runner::disable_update: false
+
+# Proxy configuration (optional)
+# github_actions_runner::http_proxy: 'http://proxy.local:8080'
+# github_actions_runner::https_proxy: 'http://proxy.local:8080'
+# github_actions_runner::no_proxy: 'localhost,127.0.0.1,.local'
+
+# Runner instances
+github_actions_runner::instances:
+  basic-runner:
+    org_name: 'test-org'
+    repo_name: 'test-repo'
+    # Manual runner token (Option 2) - Get from GitHub: Settings -> Actions -> Runners -> New runner
+    # Uncomment and paste your runner registration token (expires in ~1 hour)
+    # repo_token: 'AAAAABBBBBCCCCCDDDDD'
+    labels:
+      - self-hosted
+      - linux
+      - x64
+      - test

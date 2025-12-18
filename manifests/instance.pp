@@ -175,6 +175,18 @@ define github_actions_runner::instance (
     }
   }
 
+  if $ensure == 'absent' {
+    exec { "${instance_name}-deregister-runner":
+      user      => $user,
+      cwd       => "${github_actions_runner::root_dir}/${instance_name}",
+      command   => "/bin/bash -c 'source ${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh && ${github_actions_runner::root_dir}/${instance_name}/config.sh remove --token \$TOKEN'",
+      onlyif    => "test -f ${github_actions_runner::root_dir}/${instance_name}/config.sh",
+      path      => ['/bin', '/usr/bin', '/usr/local/bin'],
+      logoutput => $logoutput,
+      before    => File["${github_actions_runner::root_dir}/${instance_name}"],
+    }
+  }
+
   exec { "${instance_name}-ownership":
     user        => $user,
     cwd         => $github_actions_runner::root_dir,

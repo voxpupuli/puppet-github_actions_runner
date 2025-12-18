@@ -1,0 +1,8 @@
+# Vagrant
+.vagrant/
+*.log
+ubuntu-*-cloudimg-console.log
+
+# OS
+.DS_Store
+Thumbs.db
