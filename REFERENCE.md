@@ -71,7 +71,7 @@ enterprise name for global runners
 
 ##### <a name="-github_actions_runner--personal_access_token"></a>`personal_access_token`
 
-Data type: `Any`
+Data type: `Optional[Variant[Sensitive[String[1]], String[1]]]`
 
 GitHub PAT with admin permission on the repositories or the origanization.
 
@@ -235,7 +235,7 @@ Default value: `$github_actions_runner::enterprise_name`
 
 ##### <a name="-github_actions_runner--instance--personal_access_token"></a>`personal_access_token`
 
-Data type: `Any`
+Data type: `Optional[Variant[Sensitive[String[1]], String[1]]]`
 
 GitHub PAT with admin permission on the repositories or the origanization.(Default: Value set by github_actions_runner Class)
 
@@ -371,7 +371,7 @@ Default value: `undef`
 
 ##### <a name="-github_actions_runner--instance--repo_token"></a>`repo_token`
 
-Data type: `Optional[Any]`
+Data type: `Optional[Variant[Sensitive[String[1]], String[1]]]`
 
 Runner registration token from repository settings. If set, PAT authentication is skipped. Requires both org_name and repo_name to be set.
 
