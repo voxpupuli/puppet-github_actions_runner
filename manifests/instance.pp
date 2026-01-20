@@ -16,38 +16,41 @@
 # @param https_proxy Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 # @param no_proxy Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 # @param disable_update toggle for disabling automatic runner updates.
+# @param logoutput Enable or disable output logging for the configure_install_runner.sh script. (Default: Value set by github_actions_runner Class)
 # @param repo_name actions runner repository name.
 # @param labels A list of costum lables to add to a runner.
 # @param path List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 # @param env List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 # @param runner_group The github runner group to add the runner to.
-# @param repo_token if set, the runner will be registed to a specific repo. repo_name is than required.
+# @param repo_token Runner registration token from repository settings. If set, PAT authentication is skipped. Requires both org_name and repo_name to be set.
 #
 define github_actions_runner::instance (
-  Enum['present', 'absent']      $ensure                = 'present',
-  Variant[Sensitive[String[1]],String[1]] $personal_access_token = $github_actions_runner::personal_access_token,
-  Optional[Variant[Sensitive[String[1]],String[1]]] $repo_token = undef,
-  String[1]                      $user                  = $github_actions_runner::user,
-  String[1]                      $group                 = $github_actions_runner::group,
-  String[1]                      $hostname              = $facts['networking']['hostname'],
-  String[1]                      $instance_name         = $title,
-  String[1]                      $github_domain         = $github_actions_runner::github_domain,
-  String[1]                      $github_api            = $github_actions_runner::github_api,
-  Optional[String[1]]            $http_proxy            = $github_actions_runner::http_proxy,
-  Optional[String[1]]            $https_proxy           = $github_actions_runner::https_proxy,
-  Optional[String[1]]            $no_proxy              = $github_actions_runner::no_proxy,
-  Optional[Boolean]              $disable_update        = $github_actions_runner::disable_update,
-  Optional[Array[String[1]]]     $labels                = undef,
-  Optional[String[1]]            $enterprise_name       = $github_actions_runner::enterprise_name,
-  Optional[String[1]]            $org_name              = $github_actions_runner::org_name,
-  Optional[String[1]]            $repo_name             = undef,
-  Optional[Array[String]]        $path                  = $github_actions_runner::path,
-  Optional[Hash[String, String]] $env                   = $github_actions_runner::env,
-  Optional[String[1]]            $runner_group          = undef,
+  Enum['present', 'absent']                           $ensure                = 'present',
+  Optional[Variant[Sensitive[String[1]], String[1]]] $personal_access_token = $github_actions_runner::personal_access_token,
+  Optional[Variant[Sensitive[String[1]], String[1]]] $repo_token            = undef,
+  String[1]                                           $user                  = $github_actions_runner::user,
+  String[1]                                           $group                 = $github_actions_runner::group,
+  String[1]                                           $hostname              = $facts['networking']['hostname'],
+  String[1]                                           $instance_name         = $title,
+  String[1]                                           $github_domain         = $github_actions_runner::github_domain,
+  String[1]                                           $github_api            = $github_actions_runner::github_api,
+  Optional[String[1]]                                 $http_proxy            = $github_actions_runner::http_proxy,
+  Optional[String[1]]                                 $https_proxy           = $github_actions_runner::https_proxy,
+  Optional[String[1]]                                 $no_proxy              = $github_actions_runner::no_proxy,
+  Optional[Boolean]                                   $disable_update        = $github_actions_runner::disable_update,
+  Boolean                                             $logoutput             = $github_actions_runner::logoutput,
+  Optional[Array[String[1]]]                          $labels                = undef,
+  Optional[String[1]]                                 $enterprise_name       = $github_actions_runner::enterprise_name,
+  Optional[String[1]]                                 $org_name              = $github_actions_runner::org_name,
+  Optional[String[1]]                                 $repo_name             = undef,
+  Optional[Array[String]]                             $path                  = $github_actions_runner::path,
+  Optional[Hash[String, String]]                      $env                   = $github_actions_runner::env,
+  Optional[String[1]]                                 $runner_group          = undef,
 ) {
   # when a repo_token is set, the repo_name is required as well
   if $repo_token {
     assert_type(String[1], $repo_name)
+    assert_type(String[1], $org_name)
   }
 
   if $labels {
@@ -57,7 +60,18 @@ define github_actions_runner::instance (
     $assured_labels = ''
   }
 
-  if $org_name {
+  # When using a manually generated repo_token, we don't need to fetch a token via API
+  # but we still need to construct the URL for config.sh
+  if $repo_token {
+    # Manual token mode: construct URL but no token_url needed
+    if $org_name and $repo_name {
+      $token_url = undef
+      $url = "${github_domain}/${org_name}/${repo_name}"
+    } else {
+      fail("When using 'repo_token', both 'org_name' and 'repo_name' are required")
+    }
+  } elsif $org_name {
+    # PAT mode: construct both token_url and url
     if $repo_name {
       $token_url = "${github_api}/repos/${org_name}/${repo_name}/actions/runners/registration-token"
       $url = "${github_domain}/${org_name}/${repo_name}"
@@ -80,13 +94,34 @@ define github_actions_runner::instance (
     'absent'  => absent,
   }
 
+  # Determine if user is managed in init.pp
+  $user_managed = $user in $github_actions_runner::users
+  $group_managed = $group in $github_actions_runner::users
+
+  # Build dependencies based on user management
+  $base_requires = [File[$github_actions_runner::root_dir]]
+  $user_requires = $user_managed ? {
+    true  => $base_requires + [User[$user]],
+    false => $base_requires,
+  }
+  $all_requires = $group_managed ? {
+    true  => $user_requires + [Group[$group]],
+    false => $user_requires,
+  }
+
   file { "${github_actions_runner::root_dir}/${instance_name}":
     ensure  => $ensure_instance_directory,
     mode    => '0750',
     owner   => $user,
     group   => $group,
     force   => true,
-    require => File[$github_actions_runner::root_dir],
+    require => $all_requires,
+  }
+
+  # Set proxy_type based on http_proxy setting
+  $proxy_type = $http_proxy ? {
+    undef   => undef,
+    default => 'http',
   }
 
   archive { "${instance_name}-${archive_name}":
@@ -99,6 +134,8 @@ define github_actions_runner::instance (
     extract_path => "${github_actions_runner::root_dir}/${instance_name}",
     creates      => "${github_actions_runner::root_dir}/${instance_name}/bin",
     cleanup      => true,
+    proxy_server => $http_proxy,
+    proxy_type   => $proxy_type,
     require      => File["${github_actions_runner::root_dir}/${instance_name}"],
   }
 
@@ -113,6 +150,9 @@ define github_actions_runner::instance (
     assured_labels        => $assured_labels,
     disable_update        => $disable_update,
     runner_group          => $runner_group,
+    http_proxy            => $http_proxy,
+    https_proxy           => $https_proxy,
+    no_proxy              => $no_proxy,
   }
   file { "${github_actions_runner::root_dir}/${name}/configure_install_runner.sh":
     ensure  => $ensure,
@@ -135,6 +175,18 @@ define github_actions_runner::instance (
     }
   }
 
+  if $ensure == 'absent' {
+    exec { "${instance_name}-deregister-runner":
+      user      => $user,
+      cwd       => "${github_actions_runner::root_dir}/${instance_name}",
+      command   => "/bin/bash -c 'source ${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh && ${github_actions_runner::root_dir}/${instance_name}/config.sh remove --token \$TOKEN'",
+      onlyif    => "test -f ${github_actions_runner::root_dir}/${instance_name}/config.sh",
+      path      => ['/bin', '/usr/bin', '/usr/local/bin'],
+      logoutput => $logoutput,
+      before    => File["${github_actions_runner::root_dir}/${instance_name}"],
+    }
+  }
+
   exec { "${instance_name}-ownership":
     user        => $user,
     cwd         => $github_actions_runner::root_dir,
@@ -152,10 +204,11 @@ define github_actions_runner::instance (
     refreshonly => true,
     path        => ['/bin', '/usr/bin'],
     onlyif      => "test -d ${github_actions_runner::root_dir}/${instance_name}",
+    logoutput   => $logoutput,
   }
 
   $content_path = $path ? {
-    undef   => undef,
+    undef   => '',
     default => epp('github_actions_runner/path.epp', {
       paths => $path,
     })
@@ -174,7 +227,7 @@ define github_actions_runner::instance (
   }
 
   $content_env = $env ? {
-    undef   => undef,
+    undef   => '',
     default => epp('github_actions_runner/env.epp', {
       envs => $env,
     })

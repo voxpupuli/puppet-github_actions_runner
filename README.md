@@ -18,11 +18,13 @@ Automatic configuration for running GitHub Actions as a service
 * [Hiera configuration examples](#hiera-configuration-examples)
   * [Creating an organization level Actions runner](#creating-an-organization-level-actions-runner)
   * [Creating an additional repository level Actions runner](#creating-an-additional-repository-level-actions-runner)
+  * [Using manually generated runner tokens (without PAT)](#using-manually-generated-runner-tokens-without-pat)
   * [Instance level overwrites](#instance-level-overwrites)
   * [Adding a global proxy and overwriting an instance level proxy](#adding-a-global-proxy-and-overwriting-an-instance-level-proxy)
 * [Github Enterprise examples](#github-enterprise-examples)
 * [Update PATH used by Github Runners](#Update-path-used-by-github-runners)
 * [Adding environment variables to runner](#adding-environment-variables-to-runner)
+* [Local Testing with Vagrant](#local-testing-with-vagrant)
 * [Limitations - OS compatibility, etc.](#limitations)
 * [Development - Guide for contributing to the module](#development)
 * [Transfer Notice](#transfer-notice)
@@ -39,7 +41,7 @@ This module supports configuration through hiera.
 
 ```yaml
 github_actions_runner::ensure: present
-github_actions_runner::base_dir_name: '/data/actions-runner'
+github_actions_runner::base_dir_name: '/opt/actions-runner'
 github_actions_runner::package_name: 'actions-runner-linux-x64'
 github_actions_runner::package_ensure: '2.277.1'
 github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
@@ -70,6 +72,110 @@ github_actions_runner::instances:
 
 Note, your `personal_access_token` has to contain the `repo` permission.
 
+#### Using runner registration tokens (without PAT)
+
+Instead of using a Personal Access Token (PAT) that requires broad permissions, you can provide a runner registration token directly to the module. This is more secure and recommended for repository-level runners.
+
+**Steps to generate a runner registration token:**
+1. Navigate to your repository on GitHub
+2. Go to Settings > Actions > Runners
+3. Click "New self-hosted runner"
+4. Copy the registration token from the configuration command
+
+**Example configuration:**
+```yaml
+github_actions_runner::ensure: present
+github_actions_runner::base_dir_name: '/opt/actions-runner'
+github_actions_runner::package_name: 'actions-runner-linux-x64'
+github_actions_runner::package_ensure: '2.277.1'
+github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
+github_actions_runner::org_name: 'my_github_organization'
+github_actions_runner::user: 'root'
+github_actions_runner::group: 'root'
+github_actions_runner::instances:
+  example_repo_instance:
+    repo_name: 'myrepo'
+    repo_token: 'AAAAABBBBBCCCCCDDDDD'  # Runner registration token
+    labels:
+      - self-hosted-custom
+```
+
+**Important notes:**
+- When using `repo_token`, both `org_name` and `repo_name` must be specified
+- The `personal_access_token` parameter is not required when using `repo_token`
+- Registration tokens are short-lived (typically 1 hour) and single-use
+- This method only works for repository-level runners
+- Proxy settings (`http_proxy`, `https_proxy`, `no_proxy`) are supported but only affect PAT-based authentication (not needed when using `repo_token`)
+- **Recommended:** Use `version_in_path: false` to enable runner self-updates without re-registration (see below)
+
+**Enabling automatic runner updates (recommended for repo_token):**
+
+When using manually generated tokens, you should enable runner self-updates to avoid re-registration:
+
+```yaml
+github_actions_runner::ensure: present
+github_actions_runner::base_dir_name: '/opt/actions-runner'
+github_actions_runner::package_name: 'actions-runner-linux-x64'
+github_actions_runner::package_ensure: '2.319.1'
+github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
+github_actions_runner::org_name: 'my_github_organization'
+github_actions_runner::user: 'root'
+github_actions_runner::group: 'root'
+github_actions_runner::version_in_path: false  # Enables self-updates without re-registration
+github_actions_runner::disable_update: false   # Allow runner to self-update (default)
+github_actions_runner::instances:
+  example_repo_instance:
+    repo_name: 'myrepo'
+    repo_token: 'AAAAABBBBBCCCCCDDDDD'
+    labels:
+      - self-hosted-custom
+```
+
+**How it works:**
+- `version_in_path: false` - Runner installation path is `/opt/actions-runner/` (without version suffix)
+- `disable_update: false` - Runners automatically update themselves when new versions are available
+- Each runner instance has its own directory: `/opt/actions-runner/instance_name/`
+- The `_work/` directory (checkout cache, tools) is preserved across updates
+- No re-registration needed when runners update themselves
+
+**Note:** When `version_in_path: true` (default for backwards compatibility), the installation path includes the version (e.g., `/opt/actions-runner-2.319.1/`). Changing `package_ensure` creates a new directory and requires re-registration of all runners.
+
+#### Managing runner users
+
+For security, it's recommended to run runners as dedicated non-root users. The module can manage these users for you:
+
+```yaml
+github_actions_runner::users:
+  github-runner:
+    home: /home/github-runner
+    shell: /bin/bash
+  prod-runner:
+    home: /srv/prod-runner
+    groups:
+      - docker
+
+github_actions_runner::instances:
+  standard_runner:
+    repo_name: 'public-repo'
+    user: github-runner
+    repo_token: 'TOKEN1'
+
+  production_runner:
+    repo_name: 'production'
+    user: prod-runner
+    repo_token: 'TOKEN2'
+```
+
+**User attributes:**
+- `ensure`: present or absent (default: present)
+- `home`: Home directory path (default: /home/username)
+- `shell`: Login shell (default: /bin/bash)
+- `groups`: Additional groups for the user
+- `comment`: User comment field
+- All standard Puppet user resource attributes are supported
+
+**Note:** The module automatically creates a primary group with the same name as the user.
+
 #### Instance level overwrites
 ```yaml
 github_actions_runner::instances:
@@ -83,6 +189,8 @@ github_actions_runner::instances:
     labels:
       - self-hosted-custom2
 ```
+
+**Note on `ensure: absent`:** When removing a runner instance, the module automatically deregisters the runner from GitHub before deleting the files. This ensures clean removal without leaving orphaned runners in your GitHub settings.
 
 #### Adding a global proxy and overwriting an instance level proxy
 ```yaml
@@ -108,7 +216,7 @@ In addition to the runner configuration examples above, you can also configure r
 on the enterprise level by setting a value for `enterprise_name`, for example:
 ```yaml
 github_actions_runner::ensure: present
-github_actions_runner::base_dir_name: '/data/actions-runner'
+github_actions_runner::base_dir_name: '/opt/actions-runner'
 github_actions_runner::package_name: 'actions-runner-linux-x64'
 github_actions_runner::package_ensure: '2.277.1'
 github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
@@ -161,6 +269,44 @@ github_actions_runner::env:
   FOO: "bar"
 ```
 
+
+## Local Testing with Vagrant
+
+For local development and testing, this module includes a Vagrant-based testing environment. This is particularly useful for testing changes before deploying to production.
+
+### Quick Start
+
+```bash
+cd examples/
+vagrant up
+vagrant ssh
+```
+
+### Requirements
+
+- **Vagrant** 2.4.0 or later
+- **VMware Fusion** 13+ (for M2 Mac) or **VirtualBox** (for Intel/AMD)
+- Minimum 2GB RAM, 2 CPU cores for the VM
+
+### Configuration
+
+1. The VM automatically syncs the module directory - changes on your host are immediately visible in the VM
+2. Edit Hiera configuration inside the VM:
+   ```bash
+   sudo vim /etc/puppetlabs/code/environments/production/data/common.yaml
+   ```
+3. Set your authentication (PAT or runner registration token)
+4. Test with dry-run:
+   ```bash
+   cd /etc/puppetlabs/code/modules/github_actions_runner/examples
+   puppet apply --modulepath=/etc/puppetlabs/code/modules --environment production apply_test.pp --noop
+   ```
+5. Apply configuration:
+   ```bash
+   puppet apply --modulepath=/etc/puppetlabs/code/modules --environment production apply_test.pp
+   ```
+
+For detailed instructions, see `examples/README.md`.
 
 ## Limitations
 

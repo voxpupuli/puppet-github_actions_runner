@@ -1,0 +1,156 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile for testing github_actions_runner module
+# Supports multiple providers: VMware (M2 Mac), Parallels (M2 Mac), VirtualBox (Intel)
+
+Vagrant.configure("2") do |config|
+  # Ubuntu 22.04 LTS
+  # The bento/ubuntu-22.04 box automatically detects architecture (arm64 or x86_64)
+  config.vm.box = "bento/ubuntu-22.04"
+
+  config.vm.hostname = "runner-test"
+
+  # Network configuration (optional - for accessing services)
+  # config.vm.network "private_network", ip: "192.168.56.10"
+
+  # VMware Fusion provider (recommended for M2 Mac)
+  config.vm.provider "vmware_desktop" do |v|
+    v.vmx["memsize"] = "2048"
+    v.vmx["numvcpus"] = "2"
+    v.gui = true  # Enable GUI to debug M2 Mac issues
+    # Important for Apple Silicon: Use vmxnet3 network adapter
+    v.vmx["ethernet0.virtualdev"] = "vmxnet3"
+    # Additional M2 Mac compatibility settings
+    v.vmx["firmware"] = "efi"
+    v.vmx["vhv.enable"] = "FALSE"
+  end
+
+  # Parallels provider (alternative for M2 Mac)
+  config.vm.provider "parallels" do |prl|
+    prl.memory = 2048
+    prl.cpus = 2
+    prl.update_guest_tools = true
+  end
+
+  # VirtualBox provider (for Intel Macs/Linux)
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+    vb.cpus = 2
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  end
+
+  # Sync the module directory to Puppet's module path
+  config.vm.synced_folder "..", "/etc/puppetlabs/code/modules/github_actions_runner"
+
+  # Provision with shell script to install Puppet and dependencies
+  config.vm.provision "shell", name: "install-puppet", inline: <<-SHELL
+    set -e
+
+    echo "==> Updating package list..."
+    apt-get update -qq
+
+    echo "==> Installing Puppet 8..."
+    if [ ! -f /opt/puppetlabs/bin/puppet ]; then
+      wget -q https://apt.puppet.com/puppet8-release-jammy.deb
+      dpkg -i puppet8-release-jammy.deb
+      apt-get update -qq
+      apt-get install -y puppet-agent
+      rm puppet8-release-jammy.deb
+    else
+      echo "Puppet already installed"
+    fi
+
+    # Add Puppet to PATH for all users
+    if ! grep -q "/opt/puppetlabs/bin" /etc/profile.d/puppet.sh 2>/dev/null; then
+      echo 'export PATH="/opt/puppetlabs/bin:$PATH"' > /etc/profile.d/puppet.sh
+      chmod +x /etc/profile.d/puppet.sh
+    fi
+    export PATH="/opt/puppetlabs/bin:$PATH"
+
+    echo "==> Installing required Puppet modules..."
+    # Install modules to /etc/puppetlabs/code/modules (same location as our module)
+    puppet module install puppetlabs-stdlib --target-dir /etc/puppetlabs/code/modules --force || true
+    puppet module install puppet-systemd --target-dir /etc/puppetlabs/code/modules --force || true
+    puppet module install puppet-archive --target-dir /etc/puppetlabs/code/modules --force || true
+
+    echo "==> Installing additional tools..."
+    apt-get install -y git jq curl
+
+    echo "==> Setting up Hiera configuration..."
+    # Create production environment structure
+    mkdir -p /etc/puppetlabs/code/environments/production/data
+
+    # Copy Hiera configuration files
+    cp /etc/puppetlabs/code/modules/github_actions_runner/examples/vagrant_files/hiera.yaml \
+       /etc/puppetlabs/code/environments/production/hiera.yaml
+
+    cp /etc/puppetlabs/code/modules/github_actions_runner/examples/vagrant_files/common.yaml \
+       /etc/puppetlabs/code/environments/production/data/common.yaml
+
+    # Set proper permissions
+    chmod 644 /etc/puppetlabs/code/environments/production/hiera.yaml
+    chmod 644 /etc/puppetlabs/code/environments/production/data/common.yaml
+
+    echo "==> Setting up MOTD with instructions..."
+    cat > /etc/motd <<'MOTD_EOF'
+================================================================================
+  GitHub Actions Runner - Vagrant Test Environment
+================================================================================
+
+Module path: /etc/puppetlabs/code/modules/github_actions_runner
+
+QUICK START:
+------------
+
+1. Edit Hiera configuration (set your tokens):
+   sudo vim /etc/puppetlabs/code/environments/production/data/common.yaml
+
+2. Uncomment and set ONE of these authentication methods:
+   - personal_access_token (for PAT authentication), OR
+   - repo_token (for manual runner token from GitHub UI)
+
+3. Go to examples directory:
+   cd /etc/puppetlabs/code/modules/github_actions_runner/examples
+
+4. Test with dry-run (no changes):
+   sudo puppet apply --modulepath=/etc/puppetlabs/code/modules --environment production apply_test.pp --noop
+
+5. Apply configuration:
+   sudo puppet apply --modulepath=/etc/puppetlabs/code/modules --environment production apply_test.pp
+
+6. Check runner status:
+   systemctl status github-actions-runner.*.service
+
+7. View logs:
+   journalctl -u github-actions-runner.basic-runner.service -f
+
+NOTES:
+------
+- All configuration is in Hiera: /etc/puppetlabs/code/environments/production/data/common.yaml
+- Runner tokens expire in ~1 hour (generate new one from GitHub if expired)
+- For PAT authentication, you need repo or admin:org permissions
+- Module changes from host Mac are automatically synced (no git pull needed)
+
+================================================================================
+MOTD_EOF
+
+    echo ""
+    echo "=========================================="
+    echo "Puppet installed successfully!"
+    echo "=========================================="
+    echo ""
+    echo "Next steps:"
+    echo "  vagrant ssh"
+    echo ""
+    echo "Then follow the instructions in /etc/motd"
+    echo ""
+  SHELL
+
+  # Optional: Automatically run a test
+  # config.vm.provision "shell", name: "test-module", inline: <<-SHELL
+  #   export PATH="/opt/puppetlabs/bin:$PATH"
+  #   cd /etc/puppetlabs/code/modules/github_actions_runner/examples
+  #   puppet apply --modulepath=/etc/puppetlabs/code/modules apply_test.pp --noop
+  # SHELL
+end

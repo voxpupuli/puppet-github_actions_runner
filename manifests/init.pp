@@ -18,35 +18,69 @@
 # @param https_proxy  Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 # @param no_proxy Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 # @param disable_update toggle for disabling automatic runner updates.
+# @param logoutput Enable or disable output logging for the configure_install_runner.sh script. When enabled, stdout/stderr are visible in Puppet logs. Default: true
 # @param path List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created by the runner scripts. Default value: undef
 # @param env List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
+# @param version_in_path Include package version in the root directory path. When false, enables runner self-updates without re-registration. Default: true (for backwards compatibility)
+# @param users Hash of users to create for running GitHub Actions runners. Key is username, value is hash of user attributes.
 #
 class github_actions_runner (
-  Variant[Sensitive[String[1]],String[1]] $personal_access_token = 'PAT',
-  Enum['present', 'absent']      $ensure = 'present',
-  Stdlib::Absolutepath           $base_dir_name = '/some_dir/actions-runner',
-  String[1]                      $package_name = $facts['os']['architecture'] ? { /x86_64|amd64/ => 'actions-runner-linux-x64', 'aarch64' => 'actions-runner-linux-arm64' },
-  String[1]                      $package_ensure = '2.319.1',
-  String[1]                      $repository_url = 'https://github.com/actions/runner/releases/download',
-  String[1]                      $user = 'root',
-  String[1]                      $group = 'root',
-  Hash[String[1], Hash]          $instances = {},
-  String[1]                      $github_domain = 'https://github.com',
-  String[1]                      $github_api = 'https://api.github.com',
-  Optional[String[1]]            $enterprise_name = undef,
-  Optional[String[1]]            $org_name = undef,
-  Optional[String[1]]            $http_proxy = undef,
-  Optional[String[1]]            $https_proxy = undef,
-  Optional[String[1]]            $no_proxy = undef,
-  Boolean                        $disable_update = false,
-  Optional[Array[String]]        $path = undef,
-  Optional[Hash[String, String]] $env = undef,
+  Enum['present', 'absent']                           $ensure,
+  Stdlib::Absolutepath                                $base_dir_name,
+  String[1]                                           $package_name,
+  String[1]                                           $package_ensure,
+  String[1]                                           $repository_url,
+  String[1]                                           $user,
+  String[1]                                           $group,
+  Hash[String[1], Hash]                               $instances,
+  String[1]                                           $github_domain,
+  String[1]                                           $github_api,
+  Boolean                                             $disable_update,
+  Boolean                                             $logoutput,
+  Boolean                                             $version_in_path,
+  Hash[String[1], Hash]                               $users,
+  Optional[Variant[Sensitive[String[1]], String[1]]] $personal_access_token,
+  Optional[String[1]]                                 $enterprise_name,
+  Optional[String[1]]                                 $org_name,
+  Optional[String[1]]                                 $http_proxy,
+  Optional[String[1]]                                 $https_proxy,
+  Optional[String[1]]                                 $no_proxy,
+  Optional[Array[String]]                             $path,
+  Optional[Hash[String, String]]                      $env,
 ) {
-  $root_dir = "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}"
+  $root_dir = $version_in_path ? {
+    true  => "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}",
+    false => $github_actions_runner::base_dir_name,
+  }
 
   $ensure_directory = $github_actions_runner::ensure ? {
     'present' => directory,
     'absent'  => absent,
+  }
+
+  # Create users for runner instances
+  $users.each |String $username, Hash $user_config| {
+    $user_defaults = {
+      ensure     => 'present',
+      gid        => $username,
+      home       => "/home/${username}",
+      managehome => true,
+      shell      => '/bin/bash',
+      system     => true,
+      comment    => 'GitHub Actions Runner user',
+    }
+
+    # Create group first
+    group { $username:
+      ensure => pick($user_config['ensure'], 'present'),
+      system => true,
+    }
+
+    # Create user with merged config
+    user { $username:
+      *       => $user_defaults + $user_config,
+      require => Group[$username],
+    }
   }
 
   file { $github_actions_runner::root_dir:
@@ -57,5 +91,22 @@ class github_actions_runner (
     force  => true,
   }
 
-  create_resources(github_actions_runner::instance, $github_actions_runner::instances)
+  # Create instances with proper dependencies on managed users
+  $github_actions_runner::instances.each |String $instance_name, Hash $instance_config| {
+    # Check if this instance uses a managed user
+    $instance_user = $instance_config['user'] ? {
+      undef   => $github_actions_runner::user,
+      default => $instance_config['user'],
+    }
+
+    $user_dependency = ($instance_user in $github_actions_runner::users) ? {
+      true  => [User[$instance_user]],
+      false => [],
+    }
+
+    github_actions_runner::instance { $instance_name:
+      *       => $instance_config,
+      require => $user_dependency,
+    }
+  }
 }

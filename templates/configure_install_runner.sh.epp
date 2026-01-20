@@ -1,13 +1,16 @@
-<%- | Variant[Sensitive,String] $personal_access_token,
-      String $token_url,
+<%- | Optional[Any] $personal_access_token = undef,
+      Optional[String] $token_url = undef,
       String $instance_name,
       String $root_dir,
       String $url,
       String $hostname,
       String $assured_labels,
-      Optional[Variant[Sensitive,String]] $repo_token = undef,
+      Optional[Any] $repo_token = undef,
       Optional[String[1]] $runner_group = undef,
       Boolean $disable_update,
+      Optional[String[1]] $http_proxy = undef,
+      Optional[String[1]] $https_proxy = undef,
+      Optional[String[1]] $no_proxy = undef,
 | -%>
 #!/bin/bash
 # THIS FILE IS MANAGED BY PUPPET
@@ -15,9 +18,21 @@
 set -e
 
 <% if $repo_token { -%>
+# Use manually provided registration token.
 TOKEN=<%= $repo_token %>
 <% } else {-%>
-# Get registration token.
+# Set proxy environment variables if configured (for API call).
+<% if $http_proxy { -%>
+export http_proxy="<%= $http_proxy %>"
+<% } -%>
+<% if $https_proxy { -%>
+export https_proxy="<%= $https_proxy %>"
+<% } -%>
+<% if $no_proxy { -%>
+export no_proxy="<%= $no_proxy %>"
+<% } -%>
+
+# Get registration token via API.
 TOKEN=$(curl -s -XPOST -H "authorization: token <%= $personal_access_token %>"  \
     <%= $token_url %> | jq -r .token)
 <% } -%>
@@ -26,10 +41,7 @@ TOKEN=$(curl -s -XPOST -H "authorization: token <%= $personal_access_token %>"  
 export RUNNER_ALLOW_RUNASROOT=true
 
 # (Optional) Remove previous config.
-<%= $root_dir %>/<%= $instance_name %>/config.sh remove \
-  --url <%= $url %>                                     \
-  --token ${TOKEN}                                      \
-  --name <%= $hostname %>-<%= $instance_name %> &>/dev/null
+<%= $root_dir %>/<%= $instance_name %>/config.sh remove --token ${TOKEN}
 
 # Configure the runner.
 <%= $root_dir %>/<%= $instance_name %>/config.sh \
@@ -44,7 +56,7 @@ export RUNNER_ALLOW_RUNASROOT=true
   <%- if $disable_update { -%>
   --disableupdate                                \
   <%- } -%>
-  <%= $assured_labels %> &>/dev/null
+  <%= $assured_labels %>
 
 # Copy service endpoint script.
 if [ ! -f <%= $root_dir %>/<%= $instance_name %>/runsvc.sh ]; then
