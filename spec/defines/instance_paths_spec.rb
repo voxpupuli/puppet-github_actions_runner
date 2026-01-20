@@ -26,7 +26,7 @@ describe 'github_actions_runner::instance' do
 
       describe '.path file management' do
         it 'creates .path file with correct permissions' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/.path').with(
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/.path").with(
             'ensure' => 'present',
             'owner' => 'root',
             'group' => 'root',
@@ -40,14 +40,14 @@ describe 'github_actions_runner::instance' do
           end
 
           it 'sets custom PATH content' do
-            is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/.path').
+            is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/.path").
               with_content("/custom/bin:/usr/local/bin\n")
           end
         end
 
         context 'with default path (undef)' do
           it 'creates empty .path file' do
-            is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/.path').
+            is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/.path").
               with_content('')
           end
         end
@@ -55,7 +55,7 @@ describe 'github_actions_runner::instance' do
 
       describe '.env file management' do
         it 'creates .env file with correct permissions' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/.env').with(
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/.env").with(
             'ensure' => 'present',
             'owner' => 'root',
             'group' => 'root',
@@ -74,7 +74,7 @@ describe 'github_actions_runner::instance' do
           end
 
           it 'sets environment variables in .env file' do
-            is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/.env').
+            is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/.env").
               with_content(%r{FOO=bar}).
               with_content(%r{BAZ=qux})
           end
@@ -82,7 +82,7 @@ describe 'github_actions_runner::instance' do
 
         context 'with default env (undef)' do
           it 'creates empty .env file' do
-            is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/.env').
+            is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/.env").
               with_content('')
           end
         end

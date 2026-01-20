@@ -5,7 +5,7 @@
 github_actions_runner::ensure: 'present'
 github_actions_runner::base_dir_name: '/opt/actions-runner'
 github_actions_runner::package_name: 'actions-runner-linux-x64'
-github_actions_runner::package_ensure: '2.319.1'
+github_actions_runner::package_ensure: '2.331.0'
 github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
 github_actions_runner::user: 'root'
 github_actions_runner::group: 'root'
