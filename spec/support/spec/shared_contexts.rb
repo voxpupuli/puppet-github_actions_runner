@@ -4,6 +4,7 @@
 
 # Default runner version from Hiera
 # This should match the version in data/common.yaml
+# renovate: datasource=github-releases depName=actions/runner
 RUNNER_VERSION = '2.331.0'
 
 # Default base directory from Hiera

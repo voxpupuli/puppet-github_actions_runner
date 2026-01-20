@@ -28,6 +28,7 @@ class github_actions_runner (
   Enum['present', 'absent']                           $ensure                = 'present',
   Stdlib::Absolutepath                                $base_dir_name         = '/opt/actions-runner',
   String[1]                                           $package_name          = 'actions-runner-linux-x64',
+  # renovate: datasource=github-releases depName=actions/runner
   String[1]                                           $package_ensure        = '2.331.0',
   String[1]                                           $repository_url        = 'https://github.com/actions/runner/releases/download',
   String[1]                                           $user                  = 'root',

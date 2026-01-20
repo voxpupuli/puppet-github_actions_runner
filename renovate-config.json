@@ -1,0 +1,74 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "labels": ["enhancement", "dependencies"],
+  "onboarding": false,
+  "requireConfig": "optional",
+  "platform": "github",
+  "repositories": [
+    "voxpupuli/puppet-github_actions_runner"
+  ],
+  "extends": [
+    "config:recommended"
+  ],
+  "enabledManagers": [
+    "custom.regex"
+  ],
+  "prHourlyLimit": 10,
+  "prConcurrentLimit": 20,
+  "branchConcurrentLimit": 30,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update GitHub Actions Runner version in Hiera data",
+      "fileMatch": [
+        "^data/common\\.yaml$"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+github_actions_runner::package_ensure:\\s+['\"](?<currentValue>[0-9.]+)['\"]"
+      ]
+    },
+    {
+      "customType": "regex",
+      "description": "Update GitHub Actions Runner version in Puppet manifest",
+      "fileMatch": [
+        "^manifests/init\\.pp$"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+String\\[1\\]\\s+\\$package_ensure\\s+=\\s+['\"](?<currentValue>[0-9.]+)['\"]"
+      ]
+    },
+    {
+      "customType": "regex",
+      "description": "Update GitHub Actions Runner version in RSpec shared contexts",
+      "fileMatch": [
+        "^spec/support/spec/shared_contexts\\.rb$"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+RUNNER_VERSION\\s+=\\s+['\"](?<currentValue>[0-9.]+)['\"]"
+      ]
+    }
+  ],
+  "postUpgradeTasks": {
+    "commands": [
+      "bundle config set --global path '/tmp/vendor'",
+      "bundle install",
+      "bundle exec gem install rake",
+      "bundle exec rake strings:generate:reference"
+    ],
+    "executionMode": "branch"
+  },
+  "allowedPostUpgradeCommands": [
+    "^bundle config set --global path '/tmp/vendor'$",
+    "^bundle install$",
+    "^bundle exec gem install rake$",
+    "^bundle exec rake strings:generate:reference$"
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": ["github-releases"],
+      "matchDepNames": ["actions/runner"],
+      "groupName": "GitHub Actions Runner",
+      "additionalBranchPrefix": ""
+    }
+  ]
+}
