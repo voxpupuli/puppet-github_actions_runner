@@ -27,22 +27,22 @@ describe 'github_actions_runner::instance' do
 
       describe 'PAT authentication (default)' do
         it 'contains curl command for token fetching' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{curl -s -XPOST -H "authorization: token PAT"})
         end
 
         it 'uses repository registration token API endpoint' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{https://api.github.com/repos/test_org/test_repo/actions/runners/registration-token})
         end
 
         it 'configures with repository URL' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{--url https://github.com/test_org/test_repo})
         end
 
         it 'includes configured labels' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{--labels test_label1,test_label2})
         end
       end
@@ -55,17 +55,17 @@ describe 'github_actions_runner::instance' do
         it { is_expected.to compile.with_all_deps }
 
         it 'uses direct token assignment' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{TOKEN=MANUAL_TOKEN_12345})
         end
 
         it 'does not contain curl command' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             without_content(%r{curl})
         end
 
         it 'does not fetch token from API' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             without_content(%r{registration-token})
         end
 
@@ -75,7 +75,7 @@ describe 'github_actions_runner::instance' do
           end
 
           it 'handles sensitive repo_token correctly' do
-            is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
               with_content(%r{TOKEN=SENSITIVE_TOKEN_999})
           end
         end
@@ -124,12 +124,12 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'uses organization registration token API endpoint' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{https://api.github.com/orgs/test_org/actions/runners/registration-token})
         end
 
         it 'configures with organization URL' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{--url https://github.com/test_org})
         end
       end
@@ -152,12 +152,12 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'uses enterprise registration token API endpoint' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{https://api.github.com/enterprises/test_enterprise/actions/runners/registration-token})
         end
 
         it 'configures with enterprise URL' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{--url https://github.com/enterprises/test_enterprise})
         end
       end
@@ -169,7 +169,7 @@ describe 'github_actions_runner::instance' do
           end
 
           it 'includes disableupdate flag' do
-            is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
               with_content(%r{--disableupdate})
           end
         end
@@ -180,7 +180,7 @@ describe 'github_actions_runner::instance' do
           end
 
           it 'includes runnergroup flag' do
-            is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+            is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
               with_content(%r{--runnergroup MyRunnerGroup})
           end
         end
@@ -195,12 +195,12 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'uses custom domain in runner URL' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{--url https://git.example.com/test_org/test_repo})
         end
 
         it 'uses custom API endpoint for token' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{https://git.example.com/api/v3/repos/test_org/test_repo})
         end
       end

@@ -51,11 +51,15 @@ Data type: `Enum['present', 'absent']`
 
 Determine if to add or remove the resource.
 
+Default value: `'present'`
+
 ##### <a name="-github_actions_runner--base_dir_name"></a>`base_dir_name`
 
 Data type: `Stdlib::Absolutepath`
 
 Location of the base directory for actions runner to be installed.
+
+Default value: `'/opt/actions-runner'`
 
 ##### <a name="-github_actions_runner--org_name"></a>`org_name`
 
@@ -63,11 +67,15 @@ Data type: `Optional[String[1]]`
 
 actions runner org name.
 
+Default value: `undef`
+
 ##### <a name="-github_actions_runner--enterprise_name"></a>`enterprise_name`
 
 Data type: `Optional[String[1]]`
 
 enterprise name for global runners
+
+Default value: `undef`
 
 ##### <a name="-github_actions_runner--personal_access_token"></a>`personal_access_token`
 
@@ -75,11 +83,15 @@ Data type: `Optional[Variant[Sensitive[String[1]], String[1]]]`
 
 GitHub PAT with admin permission on the repositories or the origanization.
 
+Default value: `undef`
+
 ##### <a name="-github_actions_runner--package_name"></a>`package_name`
 
 Data type: `String[1]`
 
 GitHub Actions runner offical package name.
+
+Default value: `'actions-runner-linux-x64'`
 
 ##### <a name="-github_actions_runner--package_ensure"></a>`package_ensure`
 
@@ -87,11 +99,15 @@ Data type: `String[1]`
 
 GitHub Actions runner version to be used.
 
+Default value: `'2.331.0'`
+
 ##### <a name="-github_actions_runner--repository_url"></a>`repository_url`
 
 Data type: `String[1]`
 
 URL to download GitHub actions runner.
+
+Default value: `'https://github.com/actions/runner/releases/download'`
 
 ##### <a name="-github_actions_runner--user"></a>`user`
 
@@ -99,11 +115,15 @@ Data type: `String[1]`
 
 User to be used in Service and directories.
 
+Default value: `'root'`
+
 ##### <a name="-github_actions_runner--group"></a>`group`
 
 Data type: `String[1]`
 
 Group to be used in Service and directories.
+
+Default value: `'root'`
 
 ##### <a name="-github_actions_runner--instances"></a>`instances`
 
@@ -111,11 +131,15 @@ Data type: `Hash[String[1], Hash]`
 
 Github Runner Instances to be managed.
 
+Default value: `{}`
+
 ##### <a name="-github_actions_runner--github_domain"></a>`github_domain`
 
 Data type: `String[1]`
 
 Base URL for Github Domain.
+
+Default value: `'https://github.com'`
 
 ##### <a name="-github_actions_runner--github_api"></a>`github_api`
 
@@ -123,11 +147,15 @@ Data type: `String[1]`
 
 Base URL for Github API.
 
+Default value: `'https://api.github.com'`
+
 ##### <a name="-github_actions_runner--http_proxy"></a>`http_proxy`
 
 Data type: `Optional[String[1]]`
 
 Proxy URL for HTTP traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners.
+
+Default value: `undef`
 
 ##### <a name="-github_actions_runner--https_proxy"></a>`https_proxy`
 
@@ -135,11 +163,15 @@ Data type: `Optional[String[1]]`
 
 Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 
+Default value: `undef`
+
 ##### <a name="-github_actions_runner--no_proxy"></a>`no_proxy`
 
 Data type: `Optional[String[1]]`
 
 Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
+
+Default value: `undef`
 
 ##### <a name="-github_actions_runner--disable_update"></a>`disable_update`
 
@@ -147,11 +179,15 @@ Data type: `Boolean`
 
 toggle for disabling automatic runner updates.
 
+Default value: `false`
+
 ##### <a name="-github_actions_runner--logoutput"></a>`logoutput`
 
 Data type: `Boolean`
 
 Enable or disable output logging for the configure_install_runner.sh script. When enabled, stdout/stderr are visible in Puppet logs. Default: true
+
+Default value: `true`
 
 ##### <a name="-github_actions_runner--path"></a>`path`
 
@@ -159,11 +195,15 @@ Data type: `Optional[Array[String]]`
 
 List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created by the runner scripts. Default value: undef
 
+Default value: `undef`
+
 ##### <a name="-github_actions_runner--env"></a>`env`
 
 Data type: `Optional[Hash[String, String]]`
 
 List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
+
+Default value: `undef`
 
 ##### <a name="-github_actions_runner--version_in_path"></a>`version_in_path`
 
@@ -171,11 +211,15 @@ Data type: `Boolean`
 
 Include package version in the root directory path. When false, enables runner self-updates without re-registration. Default: true (for backwards compatibility)
 
+Default value: `true`
+
 ##### <a name="-github_actions_runner--users"></a>`users`
 
 Data type: `Hash[String[1], Hash]`
 
 Hash of users to create for running GitHub Actions runners. Key is username, value is hash of user attributes.
+
+Default value: `{}`
 
 ## Defined types
 

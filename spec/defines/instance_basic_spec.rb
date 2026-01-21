@@ -28,7 +28,7 @@ describe 'github_actions_runner::instance' do
         it { is_expected.to compile.with_all_deps }
 
         it 'creates instance directory with correct permissions' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner').with(
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner").with(
             'ensure' => 'directory',
             'owner' => 'root',
             'group' => 'root',
@@ -37,20 +37,20 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'downloads and extracts runner archive' do
-          is_expected.to contain_archive('test_runner-actions-runner-linux-x64-2.319.1.tar.gz').with(
+          is_expected.to contain_archive("test_runner-actions-runner-linux-x64-#{RUNNER_VERSION}.tar.gz").with(
             'ensure' => 'present',
             'user' => 'root',
             'group' => 'root',
-            'source' => 'https://github.com/actions/runner/releases/download/v2.319.1/actions-runner-linux-x64-2.319.1.tar.gz',
+            'source' => "https://github.com/actions/runner/releases/download/v#{RUNNER_VERSION}/actions-runner-linux-x64-#{RUNNER_VERSION}.tar.gz",
             'extract' => true,
-            'extract_path' => '/opt/actions-runner-2.319.1/test_runner',
-            'creates' => '/opt/actions-runner-2.319.1/test_runner/bin',
+            'extract_path' => "/opt/actions-runner-#{RUNNER_VERSION}/test_runner",
+            'creates' => "/opt/actions-runner-#{RUNNER_VERSION}/test_runner/bin",
             'cleanup' => true
           )
         end
 
         it 'creates configuration script' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').with(
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").with(
             'ensure' => 'present',
             'mode' => '0755',
             'owner' => 'root',
@@ -69,7 +69,7 @@ describe 'github_actions_runner::instance' do
         it 'creates runner ownership exec' do
           is_expected.to contain_exec('test_runner-ownership').with(
             'user' => 'root',
-            'command' => '/bin/chown -R root:root /opt/actions-runner-2.319.1/test_runner',
+            'command' => "/bin/chown -R root:root /opt/actions-runner-#{RUNNER_VERSION}/test_runner",
             'refreshonly' => true
           )
         end
@@ -84,7 +84,7 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'creates directory with custom ownership' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner').with(
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner").with(
             'owner' => 'runner_user',
             'group' => 'runner_group'
           )
@@ -98,7 +98,7 @@ describe 'github_actions_runner::instance' do
 
         it 'sets custom ownership in chown command' do
           is_expected.to contain_exec('test_runner-ownership').with(
-            'command' => '/bin/chown -R runner_user:runner_group /opt/actions-runner-2.319.1/test_runner'
+            'command' => "/bin/chown -R runner_user:runner_group /opt/actions-runner-#{RUNNER_VERSION}/test_runner"
           )
         end
       end
@@ -109,13 +109,13 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'removes instance directory' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner').with(
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner").with(
             'ensure' => 'absent'
           )
         end
 
         it 'removes archive' do
-          is_expected.to contain_archive('test_runner-actions-runner-linux-x64-2.319.1.tar.gz').with(
+          is_expected.to contain_archive("test_runner-actions-runner-linux-x64-#{RUNNER_VERSION}.tar.gz").with(
             'ensure' => 'absent'
           )
         end

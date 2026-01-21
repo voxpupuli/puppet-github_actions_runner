@@ -39,7 +39,7 @@ describe 'github_actions_runner' do
       describe 'root directory creation' do
         context 'with default version_in_path (true)' do
           it 'creates versioned root directory' do
-            is_expected.to contain_file('/opt/actions-runner-2.319.1').with(
+            is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}").with(
               'ensure' => 'directory',
               'owner' => 'root',
               'group' => 'root',
@@ -63,7 +63,7 @@ describe 'github_actions_runner' do
           end
 
           it 'does not create versioned directory' do
-            is_expected.not_to contain_file('/opt/actions-runner-2.319.1')
+            is_expected.not_to contain_file("/opt/actions-runner-#{RUNNER_VERSION}")
           end
         end
 
@@ -73,7 +73,7 @@ describe 'github_actions_runner' do
           end
 
           it 'creates directory at custom location' do
-            is_expected.to contain_file('/custom/runner-2.319.1').with(
+            is_expected.to contain_file("/custom/runner-#{RUNNER_VERSION}").with(
               'ensure' => 'directory'
             )
           end
@@ -138,7 +138,7 @@ describe 'github_actions_runner' do
         end
 
         it 'removes root directory' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1').with(
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}").with(
             'ensure' => 'absent'
           )
         end

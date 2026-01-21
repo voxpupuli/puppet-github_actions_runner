@@ -35,27 +35,27 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'exports http_proxy environment variable' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{export http_proxy="http://proxy.local:8080"})
         end
 
         it 'exports https_proxy environment variable' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{export https_proxy="https://proxy.local:8443"})
         end
 
         it 'exports no_proxy environment variable' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{export no_proxy="localhost,example.com"})
         end
 
         it 'still uses curl for token fetching' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{curl})
         end
 
         it 'configures archive resource with proxy' do
-          is_expected.to contain_archive('test_runner-actions-runner-linux-x64-2.319.1.tar.gz').with(
+          is_expected.to contain_archive("test_runner-actions-runner-linux-x64-#{RUNNER_VERSION}.tar.gz").with(
             'proxy_server' => 'http://proxy.local:8080',
             'proxy_type' => 'http'
           )
@@ -71,18 +71,18 @@ describe 'github_actions_runner::instance' do
         end
 
         it 'does not export proxy variables when using repo_token' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             without_content(%r{export http_proxy})
         end
 
         it 'uses direct token without curl' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             with_content(%r{TOKEN=MANUAL_TOKEN}).
             without_content(%r{curl})
         end
 
         it 'still configures archive resource with proxy' do
-          is_expected.to contain_archive('test_runner-actions-runner-linux-x64-2.319.1.tar.gz').with(
+          is_expected.to contain_archive("test_runner-actions-runner-linux-x64-#{RUNNER_VERSION}.tar.gz").with(
             'proxy_server' => 'http://proxy.local:8080',
             'proxy_type' => 'http'
           )
@@ -116,14 +116,14 @@ describe 'github_actions_runner::instance' do
 
       describe 'without proxy configuration' do
         it 'does not set proxy_server in archive resource' do
-          is_expected.to contain_archive('test_runner-actions-runner-linux-x64-2.319.1.tar.gz').with(
+          is_expected.to contain_archive("test_runner-actions-runner-linux-x64-#{RUNNER_VERSION}.tar.gz").with(
             'proxy_server' => nil,
             'proxy_type' => nil
           )
         end
 
         it 'does not export proxy variables in configure script' do
-          is_expected.to contain_file('/opt/actions-runner-2.319.1/test_runner/configure_install_runner.sh').
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
             without_content(%r{export http_proxy}).
             without_content(%r{export https_proxy}).
             without_content(%r{export no_proxy})
