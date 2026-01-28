@@ -203,7 +203,7 @@ define github_actions_runner::instance (
     command     => "${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh",
     refreshonly => true,
     path        => ['/bin', '/usr/bin'],
-    onlyif      => "test -d ${github_actions_runner::root_dir}/${instance_name}",
+    unless      => "test -f ${github_actions_runner::root_dir}/${instance_name}/.credentials",
     logoutput   => $logoutput,
   }
 
