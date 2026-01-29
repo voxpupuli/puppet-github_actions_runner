@@ -66,13 +66,25 @@ describe 'github_actions_runner::instance' do
         let(:params) do
           super().merge(
             'repo_token' => 'MANUAL_TOKEN',
-            'http_proxy' => 'http://proxy.local:8080'
+            'http_proxy' => 'http://proxy.local:8080',
+            'https_proxy' => 'https://proxy.local:8443',
+            'no_proxy' => 'localhost,example.com'
           )
         end
 
-        it 'does not export proxy variables when using repo_token' do
+        it 'exports http_proxy environment variable' do
           is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
-            without_content(%r{export http_proxy})
+            with_content(%r{export http_proxy="http://proxy.local:8080"})
+        end
+
+        it 'exports https_proxy environment variable' do
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
+            with_content(%r{export https_proxy="https://proxy.local:8443"})
+        end
+
+        it 'exports no_proxy environment variable' do
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").
+            with_content(%r{export no_proxy="localhost,example.com"})
         end
 
         it 'uses direct token without curl' do
