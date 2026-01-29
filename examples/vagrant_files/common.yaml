@@ -25,7 +25,7 @@ github_actions_runner::instances:
     repo_name: 'test-repo'
     # Manual runner token (Option 2) - Get from GitHub: Settings -> Actions -> Runners -> New runner
     # Uncomment and paste your runner registration token (expires in ~1 hour)
-    # repo_token: 'AAAAABBBBBCCCCCDDDDD'
+    repo_token: 'INVALID_TEST_TOKEN'
     labels:
       - self-hosted
       - linux
