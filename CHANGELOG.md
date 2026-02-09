@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v2.0.0](https://github.com/voxpupuli/puppet-github_actions_runner/tree/v2.0.0) (2026-02-09)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-github_actions_runner/compare/v1.2.0...v2.0.0)
+
+**Breaking changes:**
+
+- Drop puppet, update openvox minimum version to 8.19 [\#38](https://github.com/voxpupuli/puppet-github_actions_runner/pull/38) ([TheMeier](https://github.com/TheMeier))
+
+**Implemented enhancements:**
+
+- Fix REFERENCE.md missing default values and update runner to 2.331.0 [\#45](https://github.com/voxpupuli/puppet-github_actions_runner/pull/45) ([slauger](https://github.com/slauger))
+
+**Fixed bugs:**
+
+- fix: improve runner registration idempotency check [\#46](https://github.com/voxpupuli/puppet-github_actions_runner/pull/46) ([slauger](https://github.com/slauger))
+
+**Merged pull requests:**
+
+- Modernize module: Hiera migration, proxy support, user management, and manual token authentication [\#43](https://github.com/voxpupuli/puppet-github_actions_runner/pull/43) ([slauger](https://github.com/slauger))
+
 ## [v1.2.0](https://github.com/voxpupuli/puppet-github_actions_runner/tree/v1.2.0) (2025-04-16)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-github_actions_runner/compare/v1.1.0...v1.2.0)
