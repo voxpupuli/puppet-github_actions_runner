@@ -160,19 +160,7 @@ define github_actions_runner::instance (
     owner   => $user,
     group   => $group,
     content => stdlib::deferrable_epp('github_actions_runner/configure_install_runner.sh.epp', $data),
-    notify  => Exec["${instance_name}-run_configure_install_runner.sh"],
     require => Archive["${instance_name}-${archive_name}"],
-  }
-
-  if $ensure == 'present' {
-    exec { "${instance_name}-check-runner-configured":
-      user    => $user,
-      cwd     => '/srv',
-      command => 'true',
-      unless  => "test -f ${github_actions_runner::root_dir}/${instance_name}/runsvc.sh",
-      path    => ['/bin', '/usr/bin'],
-      notify  => Exec["${instance_name}-run_configure_install_runner.sh"],
-    }
   }
 
   if $ensure == 'absent' {
@@ -198,13 +186,12 @@ define github_actions_runner::instance (
   }
 
   exec { "${instance_name}-run_configure_install_runner.sh":
-    user        => $user,
-    cwd         => "${github_actions_runner::root_dir}/${instance_name}",
-    command     => "${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh",
-    refreshonly => true,
-    path        => ['/bin', '/usr/bin'],
-    onlyif      => "test -d ${github_actions_runner::root_dir}/${instance_name}",
-    logoutput   => $logoutput,
+    user      => $user,
+    cwd       => "${github_actions_runner::root_dir}/${instance_name}",
+    command   => "${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh",
+    path      => ['/bin', '/usr/bin'],
+    unless    => "test -f ${github_actions_runner::root_dir}/${instance_name}/.credentials",
+    logoutput => $logoutput,
   }
 
   $content_path = $path ? {
