@@ -32,7 +32,7 @@ describe 'github_actions_runner::instance' do
             'ensure' => 'directory',
             'owner' => 'root',
             'group' => 'root',
-            'mode' => '0750'
+            'mode' => '0750',
           )
         end
 
@@ -45,7 +45,7 @@ describe 'github_actions_runner::instance' do
             'extract' => true,
             'extract_path' => "/opt/actions-runner-#{RUNNER_VERSION}/test_runner",
             'creates' => "/opt/actions-runner-#{RUNNER_VERSION}/test_runner/bin",
-            'cleanup' => true
+            'cleanup' => true,
           )
         end
 
@@ -54,7 +54,7 @@ describe 'github_actions_runner::instance' do
             'ensure' => 'present',
             'mode' => '0755',
             'owner' => 'root',
-            'group' => 'root'
+            'group' => 'root',
           )
         end
 
@@ -62,7 +62,7 @@ describe 'github_actions_runner::instance' do
           is_expected.to contain_systemd__unit_file('github-actions-runner.test_runner.service').with(
             'ensure' => 'present',
             'enable' => true,
-            'active' => true
+            'active' => true,
           )
         end
 
@@ -70,7 +70,7 @@ describe 'github_actions_runner::instance' do
           is_expected.to contain_exec('test_runner-ownership').with(
             'user' => 'root',
             'command' => "/bin/chown -R root:root /opt/actions-runner-#{RUNNER_VERSION}/test_runner",
-            'refreshonly' => true
+            'refreshonly' => true,
           )
         end
       end
@@ -79,26 +79,26 @@ describe 'github_actions_runner::instance' do
         let(:params) do
           super().merge(
             'user' => 'runner_user',
-            'group' => 'runner_group'
+            'group' => 'runner_group',
           )
         end
 
         it 'creates directory with custom ownership' do
           is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner").with(
             'owner' => 'runner_user',
-            'group' => 'runner_group'
+            'group' => 'runner_group',
           )
         end
 
         it 'runs exec as custom user' do
           is_expected.to contain_exec('test_runner-run_configure_install_runner.sh').with(
-            'user' => 'runner_user'
+            'user' => 'runner_user',
           )
         end
 
         it 'sets custom ownership in chown command' do
           is_expected.to contain_exec('test_runner-ownership').with(
-            'command' => "/bin/chown -R runner_user:runner_group /opt/actions-runner-#{RUNNER_VERSION}/test_runner"
+            'command' => "/bin/chown -R runner_user:runner_group /opt/actions-runner-#{RUNNER_VERSION}/test_runner",
           )
         end
       end
@@ -110,13 +110,13 @@ describe 'github_actions_runner::instance' do
 
         it 'removes instance directory' do
           is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner").with(
-            'ensure' => 'absent'
+            'ensure' => 'absent',
           )
         end
 
         it 'removes archive' do
           is_expected.to contain_archive("test_runner-actions-runner-linux-x64-#{RUNNER_VERSION}.tar.gz").with(
-            'ensure' => 'absent'
+            'ensure' => 'absent',
           )
         end
 
@@ -124,7 +124,7 @@ describe 'github_actions_runner::instance' do
           is_expected.to contain_systemd__unit_file('github-actions-runner.test_runner.service').with(
             'ensure' => 'absent',
             'enable' => false,
-            'active' => false
+            'active' => false,
           )
         end
 

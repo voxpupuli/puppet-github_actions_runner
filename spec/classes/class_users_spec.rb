@@ -13,9 +13,9 @@ describe 'github_actions_runner' do
           'instances' => {
             'test_runner' => {
               'repo_name' => 'test_repo',
-              'labels' => ['test']
-            }
-          }
+              'labels' => ['test'],
+            },
+          },
         }
       end
 
@@ -26,13 +26,13 @@ describe 'github_actions_runner' do
               'users' => {
                 'runner1' => {
                   'home' => '/home/runner1',
-                  'shell' => '/bin/bash'
+                  'shell' => '/bin/bash',
                 },
                 'runner2' => {
                   'home' => '/srv/runner2',
-                  'groups' => ['docker']
-                }
-              }
+                  'groups' => ['docker'],
+                },
+              },
             )
           end
 
@@ -42,7 +42,7 @@ describe 'github_actions_runner' do
               'home' => '/home/runner1',
               'shell' => '/bin/bash',
               'system' => true,
-              'managehome' => true
+              'managehome' => true,
             )
 
             is_expected.to contain_user('runner2').with(
@@ -50,19 +50,19 @@ describe 'github_actions_runner' do
               'home' => '/srv/runner2',
               'groups' => ['docker'],
               'system' => true,
-              'managehome' => true
+              'managehome' => true,
             )
           end
 
           it 'creates primary groups for users' do
             is_expected.to contain_group('runner1').with(
               'ensure' => 'present',
-              'system' => true
+              'system' => true,
             )
 
             is_expected.to contain_group('runner2').with(
               'ensure' => 'present',
-              'system' => true
+              'system' => true,
             )
           end
 
@@ -89,21 +89,21 @@ describe 'github_actions_runner' do
             super().merge(
               'users' => {
                 'old_runner' => {
-                  'ensure' => 'absent'
-                }
-              }
+                  'ensure' => 'absent',
+                },
+              },
             )
           end
 
           it 'removes the user' do
             is_expected.to contain_user('old_runner').with(
-              'ensure' => 'absent'
+              'ensure' => 'absent',
             )
           end
 
           it 'removes the group' do
             is_expected.to contain_group('old_runner').with(
-              'ensure' => 'absent'
+              'ensure' => 'absent',
             )
           end
         end
@@ -117,9 +117,9 @@ describe 'github_actions_runner' do
                   'shell' => '/bin/zsh',
                   'comment' => 'Custom runner user',
                   'system' => false,
-                  'managehome' => false
-                }
-              }
+                  'managehome' => false,
+                },
+              },
             )
           end
 
@@ -129,7 +129,7 @@ describe 'github_actions_runner' do
               'shell' => '/bin/zsh',
               'comment' => 'Custom runner user',
               'system' => false,
-              'managehome' => false
+              'managehome' => false,
             )
           end
         end
@@ -139,22 +139,22 @@ describe 'github_actions_runner' do
             super().merge(
               'users' => {
                 'runner_user' => {
-                  'home' => '/home/runner_user'
-                }
+                  'home' => '/home/runner_user',
+                },
               },
               'instances' => {
                 'test_runner' => {
                   'repo_name' => 'test_repo',
                   'user' => 'runner_user',
-                  'labels' => ['test']
-                }
-              }
+                  'labels' => ['test'],
+                },
+              },
             )
           end
 
           it 'creates instance that requires the user' do
-            is_expected.to contain_github_actions_runner__instance('test_runner').
-              that_requires('User[runner_user]')
+            is_expected.to contain_github_actions_runner__instance('test_runner')
+              .that_requires('User[runner_user]')
           end
         end
       end
