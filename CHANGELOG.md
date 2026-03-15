@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
-## [v2.0.0](https://github.com/voxpupuli/puppet-github_actions_runner/tree/v2.0.0) (2026-02-09)
+## [v2.0.0](https://github.com/voxpupuli/puppet-github_actions_runner/tree/v2.0.0) (2026-03-15)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-github_actions_runner/compare/v1.2.0...v2.0.0)
 
@@ -14,6 +14,8 @@ These should not affect the functionality of the module.
 
 **Implemented enhancements:**
 
+- puppet/archive: Allow 8.x [\#50](https://github.com/voxpupuli/puppet-github_actions_runner/pull/50) ([bastelfreak](https://github.com/bastelfreak))
+- puppet/systemd: Allow 9.x [\#49](https://github.com/voxpupuli/puppet-github_actions_runner/pull/49) ([bastelfreak](https://github.com/bastelfreak))
 - Fix REFERENCE.md missing default values and update runner to 2.331.0 [\#45](https://github.com/voxpupuli/puppet-github_actions_runner/pull/45) ([slauger](https://github.com/slauger))
 
 **Fixed bugs:**
