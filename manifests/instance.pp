@@ -50,21 +50,15 @@ define github_actions_runner::instance (
   Optional[Hash[String, String]]                      $env                   = $github_actions_runner::env,
   Optional[String[1]]                                 $runner_group          = undef,
 ) {
-  # when a repo_token is set, both org_name and repo_name are required
+  # when a repo_token is set, the repo_name and org_name are required as well
   if $repo_token {
-    unless $repo_name {
-      fail("github_actions_runner::instance[${title}]: 'repo_name' is required when 'repo_token' is set")
-    }
-    unless $org_name {
-      fail("github_actions_runner::instance[${title}]: 'org_name' is required when 'repo_token' is set")
-    }
+    assert_type(String[1], $repo_name)
+    assert_type(String[1], $org_name)
   }
 
   # when an org_token is set, org_name is required
   if $org_token {
-    unless $org_name {
-      fail("github_actions_runner::instance[${title}]: 'org_name' is required when 'org_token' is set")
-    }
+    assert_type(String[1], $org_name)
   }
 
   if $labels {
