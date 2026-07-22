@@ -23,11 +23,14 @@
 # @param env List of variables to be used as env variables in the instance runner. If not defined, file ".env" will be kept as created by the runner scripts. (Default: Value set by github_actions_runner Class)
 # @param runner_group The github runner group to add the runner to.
 # @param repo_token Runner registration token from repository settings. If set, PAT authentication is skipped. Requires both org_name and repo_name to be set.
+# @param org_token Runner registration token for organisation-level runners obtained from the GitHub UI.
+#   If set, PAT authentication is skipped. Requires org_name to be set.
 #
 define github_actions_runner::instance (
   Enum['present', 'absent']                           $ensure                = 'present',
   Optional[Variant[Sensitive[String[1]], String[1]]] $personal_access_token = $github_actions_runner::personal_access_token,
   Optional[Variant[Sensitive[String[1]], String[1]]] $repo_token            = undef,
+  Optional[Variant[Sensitive[String[1]], String[1]]] $org_token             = $github_actions_runner::org_token,
   String[1]                                           $user                  = $github_actions_runner::user,
   String[1]                                           $group                 = $github_actions_runner::group,
   String[1]                                           $hostname              = $facts['networking']['hostname'],
@@ -47,9 +50,14 @@ define github_actions_runner::instance (
   Optional[Hash[String, String]]                      $env                   = $github_actions_runner::env,
   Optional[String[1]]                                 $runner_group          = undef,
 ) {
-  # when a repo_token is set, the repo_name is required as well
+  # when a repo_token is set, both org_name and repo_name are required
   if $repo_token {
     assert_type(String[1], $repo_name)
+    assert_type(String[1], $org_name)
+  }
+
+  # when an org_token is set, org_name is required
+  if $org_token {
     assert_type(String[1], $org_name)
   }
 
@@ -63,13 +71,17 @@ define github_actions_runner::instance (
   # When using a manually generated repo_token, we don't need to fetch a token via API
   # but we still need to construct the URL for config.sh
   if $repo_token {
-    # Manual token mode: construct URL but no token_url needed
+    # Manual token mode for repository-level runners.
     if $org_name and $repo_name {
       $token_url = undef
       $url = "${github_domain}/${org_name}/${repo_name}"
     } else {
       fail("When using 'repo_token', both 'org_name' and 'repo_name' are required")
     }
+  } elsif $org_token {
+    # Manual token mode for organisation-level runners.
+    $token_url = undef
+    $url = "${github_domain}/${org_name}"
   } elsif $org_name {
     # PAT mode: construct both token_url and url
     if $repo_name {
@@ -142,6 +154,7 @@ define github_actions_runner::instance (
   $data = {
     personal_access_token => $personal_access_token,
     repo_token            => $repo_token,
+    org_token             => $org_token,
     token_url             => $token_url,
     instance_name         => $instance_name,
     root_dir              => $github_actions_runner::root_dir,

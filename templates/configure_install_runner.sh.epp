@@ -6,6 +6,7 @@
       String $hostname,
       String $assured_labels,
       Optional[Any] $repo_token = undef,
+      Optional[Any] $org_token = undef,
       Optional[String[1]] $runner_group = undef,
       Boolean $disable_update,
       Optional[String[1]] $http_proxy = undef,
@@ -29,10 +30,13 @@ export no_proxy="<%= $no_proxy %>"
 <% } -%>
 
 <% if $repo_token { -%>
-# Use manually provided registration token.
+# Use manually provided repository registration token.
 TOKEN=<%= $repo_token %>
+<% } elsif $org_token { -%>
+# Use manually provided organisation registration token.
+TOKEN=<%= $org_token %>
 <% } else {-%>
-# Get registration token via API.
+# Get registration token via the GitHub API using a PAT.
 TOKEN=$(curl -s -XPOST -H "authorization: token <%= $personal_access_token %>"  \
     <%= $token_url %> | jq -r .token)
 <% } -%>
