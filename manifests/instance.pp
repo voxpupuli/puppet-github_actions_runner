@@ -52,13 +52,19 @@ define github_actions_runner::instance (
 ) {
   # when a repo_token is set, both org_name and repo_name are required
   if $repo_token {
-    assert_type(String[1], $repo_name)
-    assert_type(String[1], $org_name)
+    unless $repo_name {
+      fail("github_actions_runner::instance[${title}]: 'repo_name' is required when 'repo_token' is set")
+    }
+    unless $org_name {
+      fail("github_actions_runner::instance[${title}]: 'org_name' is required when 'repo_token' is set")
+    }
   }
 
   # when an org_token is set, org_name is required
   if $org_token {
-    assert_type(String[1], $org_name)
+    unless $org_name {
+      fail("github_actions_runner::instance[${title}]: 'org_name' is required when 'org_token' is set")
+    }
   }
 
   if $labels {
