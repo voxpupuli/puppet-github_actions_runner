@@ -12,6 +12,10 @@
 
 * [`github_actions_runner::instance`](#github_actions_runner--instance): Configure and deploy actions runners instances
 
+### Functions
+
+* [`github_actions_runner::registration_token`](#github_actions_runner--registration_token): Generate a runner registration token with a GitHub App on the Puppet server.
+
 ## Classes
 
 ### <a name="github_actions_runner"></a>`github_actions_runner`
@@ -27,6 +31,9 @@ The following parameters are available in the `github_actions_runner` class:
 * [`org_name`](#-github_actions_runner--org_name)
 * [`enterprise_name`](#-github_actions_runner--enterprise_name)
 * [`personal_access_token`](#-github_actions_runner--personal_access_token)
+* [`app_id`](#-github_actions_runner--app_id)
+* [`app_installation_id`](#-github_actions_runner--app_installation_id)
+* [`app_private_key`](#-github_actions_runner--app_private_key)
 * [`package_name`](#-github_actions_runner--package_name)
 * [`package_ensure`](#-github_actions_runner--package_ensure)
 * [`repository_url`](#-github_actions_runner--repository_url)
@@ -82,6 +89,30 @@ Default value: `undef`
 Data type: `Optional[Variant[Sensitive[String[1]], String[1]]]`
 
 GitHub PAT with admin permission on the repositories or the origanization.
+
+Default value: `undef`
+
+##### <a name="-github_actions_runner--app_id"></a>`app_id`
+
+Data type: `Optional[Integer[1]]`
+
+Numeric ID of the GitHub App used to request runner registration tokens.
+
+Default value: `undef`
+
+##### <a name="-github_actions_runner--app_installation_id"></a>`app_installation_id`
+
+Data type: `Optional[Integer[1]]`
+
+Numeric ID of the GitHub App installation.
+
+Default value: `undef`
+
+##### <a name="-github_actions_runner--app_private_key"></a>`app_private_key`
+
+Data type: `Optional[Sensitive[String[1]]]`
+
+GitHub App PEM private key supplied as a Sensitive value.
 
 Default value: `undef`
 
@@ -235,6 +266,9 @@ The following parameters are available in the `github_actions_runner::instance` 
 * [`org_name`](#-github_actions_runner--instance--org_name)
 * [`enterprise_name`](#-github_actions_runner--instance--enterprise_name)
 * [`personal_access_token`](#-github_actions_runner--instance--personal_access_token)
+* [`app_id`](#-github_actions_runner--instance--app_id)
+* [`app_installation_id`](#-github_actions_runner--instance--app_installation_id)
+* [`app_private_key`](#-github_actions_runner--instance--app_private_key)
 * [`user`](#-github_actions_runner--instance--user)
 * [`group`](#-github_actions_runner--instance--group)
 * [`hostname`](#-github_actions_runner--instance--hostname)
@@ -284,6 +318,30 @@ Data type: `Optional[Variant[Sensitive[String[1]], String[1]]]`
 GitHub PAT with admin permission on the repositories or the origanization.(Default: Value set by github_actions_runner Class)
 
 Default value: `$github_actions_runner::personal_access_token`
+
+##### <a name="-github_actions_runner--instance--app_id"></a>`app_id`
+
+Data type: `Optional[Integer[1]]`
+
+Numeric ID of the GitHub App used to request runner registration tokens. (Default: Value set by github_actions_runner Class)
+
+Default value: `$github_actions_runner::app_id`
+
+##### <a name="-github_actions_runner--instance--app_installation_id"></a>`app_installation_id`
+
+Data type: `Optional[Integer[1]]`
+
+Numeric ID of the GitHub App installation. (Default: Value set by github_actions_runner Class)
+
+Default value: `$github_actions_runner::app_installation_id`
+
+##### <a name="-github_actions_runner--instance--app_private_key"></a>`app_private_key`
+
+Data type: `Optional[Sensitive[String[1]]]`
+
+GitHub App PEM private key supplied as a Sensitive value. (Default: Value set by github_actions_runner Class)
+
+Default value: `$github_actions_runner::app_private_key`
 
 ##### <a name="-github_actions_runner--instance--user"></a>`user`
 
@@ -420,4 +478,48 @@ Data type: `Optional[Variant[Sensitive[String[1]], String[1]]]`
 Runner registration token from repository settings. If set, PAT authentication is skipped. Requires both org_name and repo_name to be set.
 
 Default value: `undef`
+
+## Functions
+
+### <a name="github_actions_runner--registration_token"></a>`github_actions_runner::registration_token`
+
+Type: Ruby 4.x API
+
+Generate a runner registration token with a GitHub App on the Puppet server.
+
+#### `github_actions_runner::registration_token(Integer[1] $app_id, Integer[1] $installation_id, Sensitive[String[1]] $private_key, String[1] $github_api, String[1] $token_url)`
+
+The github_actions_runner::registration_token function.
+
+Returns: `String[1]` A short-lived runner registration token.
+
+##### `app_id`
+
+Data type: `Integer[1]`
+
+Numeric ID of the GitHub App.
+
+##### `installation_id`
+
+Data type: `Integer[1]`
+
+Numeric ID of the GitHub App installation.
+
+##### `private_key`
+
+Data type: `Sensitive[String[1]]`
+
+App PEM private key supplied as a Sensitive value.
+
+##### `github_api`
+
+Data type: `String[1]`
+
+Base URL for the GitHub API.
+
+##### `token_url`
+
+Data type: `String[1]`
+
+GitHub API endpoint that creates the runner registration token.
 

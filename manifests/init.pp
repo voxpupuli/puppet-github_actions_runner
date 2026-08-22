@@ -6,6 +6,9 @@
 # @param org_name actions runner org name.
 # @param enterprise_name enterprise name for global runners
 # @param personal_access_token GitHub PAT with admin permission on the repositories or the origanization.
+# @param app_id Numeric ID of the GitHub App used to request runner registration tokens.
+# @param app_installation_id Numeric ID of the GitHub App installation.
+# @param app_private_key GitHub App PEM private key supplied as a Sensitive value.
 # @param package_name GitHub Actions runner offical package name.
 # @param package_ensure GitHub Actions runner version to be used.
 # @param repository_url URL to download GitHub actions runner.
@@ -41,6 +44,9 @@ class github_actions_runner (
   Boolean                                             $version_in_path       = true,
   Hash[String[1], Hash]                               $users                 = {},
   Optional[Variant[Sensitive[String[1]], String[1]]] $personal_access_token = undef,
+  Optional[Integer[1]]                                $app_id                = undef,
+  Optional[Integer[1]]                                $app_installation_id   = undef,
+  Optional[Sensitive[String[1]]]                      $app_private_key       = undef,
   Optional[String[1]]                                 $enterprise_name       = undef,
   Optional[String[1]]                                 $org_name              = undef,
   Optional[String[1]]                                 $http_proxy            = undef,
