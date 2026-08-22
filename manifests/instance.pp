@@ -6,6 +6,9 @@
 #
 # @param enterprise_name enterprise name for global runners. (Default: Value set by github_actions_runner Class)
 # @param personal_access_token GitHub PAT with admin permission on the repositories or the origanization.(Default: Value set by github_actions_runner Class)
+# @param app_id Numeric ID of the GitHub App used to request runner registration tokens. (Default: Value set by github_actions_runner Class)
+# @param app_installation_id Numeric ID of the GitHub App installation. (Default: Value set by github_actions_runner Class)
+# @param app_private_key GitHub App PEM private key supplied as a Sensitive value. (Default: Value set by github_actions_runner Class)
 # @param user User to be used in Service and directories.(Default: Value set by github_actions_runner Class)
 # @param group Group to be used in Service and directories.(Default: Value set by github_actions_runner Class)
 # @param hostname actions runner name.
@@ -28,6 +31,9 @@ define github_actions_runner::instance (
   Enum['present', 'absent']                           $ensure                = 'present',
   Optional[Variant[Sensitive[String[1]], String[1]]] $personal_access_token = $github_actions_runner::personal_access_token,
   Optional[Variant[Sensitive[String[1]], String[1]]] $repo_token            = undef,
+  Optional[Integer[1]]                                $app_id               = $github_actions_runner::app_id,
+  Optional[Integer[1]]                                $app_installation_id  = $github_actions_runner::app_installation_id,
+  Optional[Sensitive[String[1]]]                      $app_private_key      = $github_actions_runner::app_private_key,
   String[1]                                           $user                  = $github_actions_runner::user,
   String[1]                                           $group                 = $github_actions_runner::group,
   String[1]                                           $hostname              = $facts['networking']['hostname'],
@@ -51,6 +57,14 @@ define github_actions_runner::instance (
   if $repo_token {
     assert_type(String[1], $repo_name)
     assert_type(String[1], $org_name)
+  }
+
+  # GitHub App authentication requires all three values and is available for
+  # repository- and organization-level runners.
+  if $app_id or $app_installation_id or $app_private_key {
+    if !$app_id or !$app_installation_id or !$app_private_key or !$org_name {
+      fail('Incomplete GitHub App configuration: app_id, app_installation_id, app_private_key, and org_name must all be set')
+    }
   }
 
   if $labels {
@@ -139,9 +153,32 @@ define github_actions_runner::instance (
     require      => File["${github_actions_runner::root_dir}/${instance_name}"],
   }
 
+  $runner_path = "${github_actions_runner::root_dir}/${instance_name}"
+  if $facts['github_actions_runner'] and $facts['github_actions_runner']['instances'] {
+    $runner_configured = $runner_path in $facts['github_actions_runner']['instances']
+  } else {
+    $runner_configured = false
+  }
+
+  if $runner_configured or $repo_token or !$app_id {
+    $app_token = undef
+  } else {
+    # This function runs during catalog compilation so the private key and
+    # GitHub App authentication remain on the Puppet server. Only the runner
+    # registration token is sent to the agent.
+    $app_token = github_actions_runner::registration_token(
+      $app_id,
+      $app_installation_id,
+      $app_private_key,
+      $github_api,
+      $token_url,
+    )
+  }
+
   $data = {
     personal_access_token => $personal_access_token,
     repo_token            => $repo_token,
+    app_token             => $app_token,
     token_url             => $token_url,
     instance_name         => $instance_name,
     root_dir              => $github_actions_runner::root_dir,
@@ -154,13 +191,16 @@ define github_actions_runner::instance (
     https_proxy           => $https_proxy,
     no_proxy              => $no_proxy,
   }
-  file { "${github_actions_runner::root_dir}/${name}/configure_install_runner.sh":
-    ensure  => $ensure,
-    mode    => '0755',
-    owner   => $user,
-    group   => $group,
-    content => stdlib::deferrable_epp('github_actions_runner/configure_install_runner.sh.epp', $data),
-    require => Archive["${instance_name}-${archive_name}"],
+
+  unless $runner_configured {
+    file { "${github_actions_runner::root_dir}/${name}/configure_install_runner.sh":
+      ensure  => $ensure,
+      mode    => '0700',
+      owner   => $user,
+      group   => $group,
+      content => stdlib::deferrable_epp('github_actions_runner/configure_install_runner.sh.epp', $data),
+      require => Archive["${instance_name}-${archive_name}"],
+    }
   }
 
   if $ensure == 'absent' {
@@ -242,6 +282,19 @@ define github_actions_runner::instance (
     'absent'  => false,
   }
 
+  if $runner_configured {
+    $unit_require = [
+      File["${github_actions_runner::root_dir}/${instance_name}/.path"],
+      Exec["${instance_name}-run_configure_install_runner.sh"],
+    ]
+  } else {
+    $unit_require = [
+      File["${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh"],
+      File["${github_actions_runner::root_dir}/${instance_name}/.path"],
+      Exec["${instance_name}-run_configure_install_runner.sh"],
+    ]
+  }
+
   systemd::unit_file { "github-actions-runner.${instance_name}.service":
     ensure  => $ensure,
     enable  => $enable_service,
@@ -255,8 +308,6 @@ define github_actions_runner::instance (
       https_proxy   => $https_proxy,
       no_proxy      => $no_proxy,
     }),
-    require => [File["${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh"],
-      File["${github_actions_runner::root_dir}/${instance_name}/.path"],
-    Exec["${instance_name}-run_configure_install_runner.sh"]],
+    require => $unit_require,
   }
 }
