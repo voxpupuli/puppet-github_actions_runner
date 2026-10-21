@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'net/http'
+require 'openssl'
 
 describe 'github_actions_runner::instance' do
   let(:title) { 'test_runner' }
@@ -114,6 +116,88 @@ describe 'github_actions_runner::instance' do
 
           it 'fails validation for missing repo_name' do
             is_expected.to compile.and_raise_error(%r{assert_type.*expects a String.*got Undef})
+          end
+        end
+      end
+
+      describe 'GitHub App authentication' do
+        let(:private_key) { sensitive(OpenSSL::PKey::RSA.generate(2048).to_pem) }
+
+        let(:params) do
+          super().merge(
+            'app_id' => 12_345,
+            'app_installation_id' => 67_890,
+            'app_private_key' => private_key,
+          )
+        end
+
+        before do
+          http = instance_double(Net::HTTP)
+          http_proxy = class_double(Net::HTTP)
+          installation_response = Net::HTTPCreated.new('1.1', '201', 'Created').tap do |response|
+            response.body = '{"token":"installation-token"}'
+            response.instance_variable_set(:@read, true)
+          end
+          registration_response = Net::HTTPCreated.new('1.1', '201', 'Created').tap do |response|
+            response.body = '{"token":"runner-token"}'
+            response.instance_variable_set(:@read, true)
+          end
+
+          allow(Net::HTTP).to receive(:Proxy).with(:ENV).and_return(http_proxy)
+          allow(http_proxy).to receive(:start).and_yield(http)
+          allow(http).to receive(:request) do |request|
+            request.path.include?('/app/installations/') ? installation_response : registration_response
+          end
+        end
+
+        it { is_expected.to compile.with_all_deps }
+
+        it 'uses the runner registration token generated on the Puppet server' do
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh")
+            .with_content(%r{TOKEN='runner-token'})
+            .without_content(%r{openssl})
+            .without_content(%r{curl})
+            .without_content(%r{BEGIN RSA PRIVATE KEY})
+            .without_content(%r{authorization: token PAT})
+        end
+
+        it 'restricts the generated script because it contains a short-lived runner token' do
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh")
+            .with_mode('0700')
+        end
+
+        it 'only runs configuration when credentials do not exist' do
+          is_expected.to contain_exec('test_runner-run_configure_install_runner.sh')
+            .with_unless("test -f /opt/actions-runner-#{RUNNER_VERSION}/test_runner/.credentials")
+        end
+
+        context 'with an incomplete configuration' do
+          let(:params) do
+            super().merge('app_installation_id' => :undef)
+          end
+
+          it 'fails validation' do
+            is_expected.to compile.and_raise_error(%r{Incomplete GitHub App configuration: app_id, app_installation_id, app_private_key, and org_name must all be set})
+          end
+        end
+
+        context 'when the runner is already configured' do
+          let(:facts) do
+            super().merge(
+              github_actions_runner: {
+                instances: ["/opt/actions-runner-#{RUNNER_VERSION}/test_runner"],
+              },
+            )
+          end
+
+          let(:params) do
+            super().merge('app_private_key' => sensitive('not evaluated for a configured runner'))
+          end
+
+          it { is_expected.to compile.with_all_deps }
+
+          it 'does not manage the installation script' do
+            is_expected.not_to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh")
           end
         end
       end

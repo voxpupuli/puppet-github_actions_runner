@@ -52,7 +52,7 @@ describe 'github_actions_runner::instance' do
         it 'creates configuration script' do
           is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh").with(
             'ensure' => 'present',
-            'mode' => '0755',
+            'mode' => '0700',
             'owner' => 'root',
             'group' => 'root',
           )

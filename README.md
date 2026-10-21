@@ -18,7 +18,8 @@ Automatic configuration for running GitHub Actions as a service
 * [Hiera configuration examples](#hiera-configuration-examples)
   * [Creating an organization level Actions runner](#creating-an-organization-level-actions-runner)
   * [Creating an additional repository level Actions runner](#creating-an-additional-repository-level-actions-runner)
-  * [Using manually generated runner tokens (without PAT)](#using-manually-generated-runner-tokens-without-pat)
+  * [Using a GitHub App (best practice)](#using-a-github-app)
+  * [Using runner registration tokens (without PAT)](#using-runner-registration-tokens-without-pat)
   * [Instance level overwrites](#instance-level-overwrites)
   * [Adding a global proxy and overwriting an instance level proxy](#adding-a-global-proxy-and-overwriting-an-instance-level-proxy)
 * [Github Enterprise examples](#github-enterprise-examples)
@@ -59,6 +60,7 @@ github_actions_runner::instances:
 Note, your `personal_access_token` has to contain the `admin:org` permission.
 
 #### Creating an additional repository level Actions runner
+
 ```yaml
 github_actions_runner::instances:
   example_org_instance:
@@ -71,6 +73,56 @@ github_actions_runner::instances:
 ```
 
 Note, your `personal_access_token` has to contain the `repo` permission.
+
+#### Using a GitHub App
+
+A GitHub App can generate the short-lived runner registration token for each runner.
+This is a significant security advantage compared to a personal access token.
+Configure the App ID, installation ID, and PEM private key at the class level.
+
+The following example uses an encrypted `hiera-eyaml` value and converts its
+result to `Sensitive`:
+
+```yaml
+github_actions_runner::org_name: 'my_github_organization'
+github_actions_runner::app_id: 12345
+github_actions_runner::app_installation_id: 67890
+github_actions_runner::app_private_key: >
+  ENC[PKCS7,...]
+github_actions_runner::instances:
+  example_repo_instance:
+    repo_name: 'myrepo'
+    labels:
+      - self-hosted-custom
+
+lookup_options:
+  github_actions_runner::app_private_key:
+    convert_to: Sensitive
+
+```
+
+All three GitHub App parameters must be set.
+Any Hiera backend or other secret source can supply `app_private_key`.
+The resulting value must be a `Sensitive[String]` containing the PEM private key.
+
+Follow the GitHub documentation to:
+
+* [Create a GitHub App](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app) and install it on your organization or repository.
+* Give it the [necessary authentication requirements](https://docs.github.com/en/actions/reference/runners/self-hosted-runners#authentication-requirements)
+
+**Security note:** The private key is unwrapped only in memory during the catalog compilation.
+The module does not write it to disk. JWT signing uses the bundled Ruby libraries,
+so no additional gem is required. Both signing and GitHub API requests occur during
+catalog compilation; neither the private key nor the App installation token is sent
+to the runner. The generated script contains only a single-use, short-lived runner
+registration token. All generated configuration scripts are restricted to their
+owning user with mode `0700` because each authentication path embeds a credential.
+
+The `github_actions_runner` fact reports runner directories containing both
+`.credentials` and `.path` in its `instances` key. The module only executes the
+GitHub App token exchange for runners absent from that list. When an instance
+is present, the module does not regenerate or manage its
+`configure_install_runner.sh`, avoiding changes caused by short-lived tokens.
 
 #### Using runner registration tokens (without PAT)
 
