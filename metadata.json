@@ -36,6 +36,12 @@
       ]
     },
     {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "9"
+      ]
+    },
+    {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
         "24.04"

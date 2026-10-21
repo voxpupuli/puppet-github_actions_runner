@@ -27,6 +27,7 @@ The following parameters are available in the `github_actions_runner` class:
 * [`org_name`](#-github_actions_runner--org_name)
 * [`enterprise_name`](#-github_actions_runner--enterprise_name)
 * [`personal_access_token`](#-github_actions_runner--personal_access_token)
+* [`org_token`](#-github_actions_runner--org_token)
 * [`package_name`](#-github_actions_runner--package_name)
 * [`package_ensure`](#-github_actions_runner--package_ensure)
 * [`repository_url`](#-github_actions_runner--repository_url)
@@ -82,6 +83,15 @@ Default value: `undef`
 Data type: `Optional[Variant[Sensitive[String[1]], String[1]]]`
 
 GitHub PAT with admin permission on the repositories or the origanization.
+
+Default value: `undef`
+
+##### <a name="-github_actions_runner--org_token"></a>`org_token`
+
+Data type: `Optional[Variant[Sensitive[String[1]], String[1]]]`
+
+Runner registration token obtained from the GitHub UI for organisation-level runners.
+When set, no PAT is required. Requires org_name to be set.
 
 Default value: `undef`
 
@@ -252,6 +262,7 @@ The following parameters are available in the `github_actions_runner::instance` 
 * [`env`](#-github_actions_runner--instance--env)
 * [`runner_group`](#-github_actions_runner--instance--runner_group)
 * [`repo_token`](#-github_actions_runner--instance--repo_token)
+* [`org_token`](#-github_actions_runner--instance--org_token)
 
 ##### <a name="-github_actions_runner--instance--ensure"></a>`ensure`
 
@@ -420,4 +431,13 @@ Data type: `Optional[Variant[Sensitive[String[1]], String[1]]]`
 Runner registration token from repository settings. If set, PAT authentication is skipped. Requires both org_name and repo_name to be set.
 
 Default value: `undef`
+
+##### <a name="-github_actions_runner--instance--org_token"></a>`org_token`
+
+Data type: `Optional[Variant[Sensitive[String[1]], String[1]]]`
+
+Runner registration token for organisation-level runners obtained from the GitHub UI.
+If set, PAT authentication is skipped. Requires org_name to be set.
+
+Default value: `$github_actions_runner::org_token`
 

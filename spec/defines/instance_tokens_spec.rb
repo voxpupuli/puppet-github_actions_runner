@@ -134,6 +134,82 @@ describe 'github_actions_runner::instance' do
         end
       end
 
+      describe 'organisation token authentication (org_token)' do
+        let(:pre_condition) do
+          <<-PUPPET
+          class { 'github_actions_runner':
+            org_name  => 'test_org',
+            org_token => 'ORG_TOKEN_12345',
+          }
+          PUPPET
+        end
+
+        let(:params) do
+          {
+            'labels' => %w[test_label1 test_label2],
+          }
+        end
+
+        it { is_expected.to compile.with_all_deps }
+
+        it 'uses direct token assignment' do
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh")
+            .with_content(%r{TOKEN=ORG_TOKEN_12345})
+        end
+
+        it 'does not contain curl command' do
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh")
+            .without_content(%r{curl})
+        end
+
+        it 'does not fetch token from API' do
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh")
+            .without_content(%r{registration-token})
+        end
+
+        it 'configures with organization URL' do
+          is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh")
+            .with_content(%r{--url https://github.com/test_org})
+        end
+
+        context 'with Sensitive type' do
+          let(:pre_condition) do
+            <<-PUPPET
+            class { 'github_actions_runner':
+              org_name  => 'test_org',
+              org_token => Sensitive('SENSITIVE_ORG_TOKEN'),
+            }
+            PUPPET
+          end
+
+          it 'handles sensitive org_token correctly' do
+            is_expected.to contain_file("/opt/actions-runner-#{RUNNER_VERSION}/test_runner/configure_install_runner.sh")
+              .with_content(%r{TOKEN=SENSITIVE_ORG_TOKEN})
+          end
+        end
+
+        context 'without org_name' do
+          let(:pre_condition) do
+            <<-PUPPET
+            class { 'github_actions_runner':
+              personal_access_token => 'PAT',
+            }
+            PUPPET
+          end
+
+          let(:params) do
+            {
+              'org_token' => 'ORG_TOKEN_12345',
+              'labels'    => %w[test_label1 test_label2],
+            }
+          end
+
+          it 'fails with validation error' do
+            is_expected.to compile.and_raise_error(%r{assert_type.*expects a String.*got Undef})
+          end
+        end
+      end
+
       describe 'enterprise level runner' do
         let(:pre_condition) do
           <<-PUPPET
