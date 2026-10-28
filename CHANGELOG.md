@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v2.1.0](https://github.com/voxpupuli/puppet-github_actions_runner/tree/v2.1.0) (2026-10-28)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-github_actions_runner/compare/v2.0.0...v2.1.0)
+
+**Implemented enhancements:**
+
+- puppet/systemd: Allow 11.x [\#60](https://github.com/voxpupuli/puppet-github_actions_runner/pull/60) ([bastelfreak](https://github.com/bastelfreak))
+- Update requirements to allow OpenVox 9 [\#59](https://github.com/voxpupuli/puppet-github_actions_runner/pull/59) ([sebastianrakel](https://github.com/sebastianrakel))
+
 ## [v2.0.0](https://github.com/voxpupuli/puppet-github_actions_runner/tree/v2.0.0) (2026-03-15)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-github_actions_runner/compare/v1.2.0...v2.0.0)
