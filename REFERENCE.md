@@ -420,4 +420,3 @@ Data type: `Optional[Variant[Sensitive[String[1]], String[1]]]`
 Runner registration token from repository settings. If set, PAT authentication is skipped. Requires both org_name and repo_name to be set.
 
 Default value: `undef`
-
